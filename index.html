@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <script src="https://fastcdn.org/Underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="rule_tree.js"></script>
+  </head>
+  <body>
+    <p>Oh, hello there.</p>
+
+    <span class="rule-show">No Rule</span>
+
+    <table style="width:100%">
+      <tr>
+        <td class="level-1"></td>
+        <td class="level-2"></td>
+        <td class="level-3"></td>
+        <td class="level-4"></td>
+        <td class="level-5"></td>
+      </tr>
+    </table>
+
+    <script>
+      var callback = function() {
+        // erase all content after "depth"
+        var _this = this;
+        var _depth = this.depth;
+
+        for (var i = _depth + 1; i <= 5; i ++) {
+          $("td.level-" + i).html("");
+        }
+
+        $("td.level-" + _depth).html("<ul class='parent'>");
+
+        var cats = _.keys(this.categories);
+        for (var i = 0; i < cats.length; i ++) {
+          var items = this.categories[cats[i]];
+
+          var itemList = "<ul class='child' style='display: none;'>"
+          for (var j = 0; j < items.length; j ++) {
+            var item = items[j];
+            itemList += "<li class='item' data-id='" + item.id + "' data-cat='" + cats[i] + "'>" + item.name + "</li>";
+          }
+          itemList += "</ul>"
+
+          $("ul.parent", "td.level-" + _depth).append("<li class='cat'>" + cats[i] + itemList + "</li>");
+        }
+
+        $("td.level-" + _depth).append("</ul>");
+
+        $("li.cat", "ul.parent").on("click", function() {
+          $("ul.child").hide();
+          $("ul.child", this).show();
+        });
+
+        $("li.item", "td.level-" + _depth).on("click", function() {
+          var id = $(this).data().id.toString();
+          var cat = $(this).data().cat;
+          var name = $(this).html();
+          _this.rule.length = _depth - 1;
+          _this.ruleString.length = _depth - 1;
+          _this.rule[_depth - 1] = id;
+          _this.ruleString[_depth - 1] = cat + "::" + name;
+          $(".rule-show").html(_this.ruleString.join(","));
+          _this.dig(_depth + 1);
+        });
+      };
+
+      $(document).ready(function() {
+        window.ruleTree = new RuleTree("http://localhost:3000", "wn5my862vnh2bgxnms734kng", "91526629", callback);
+        ruleTree.dig();
+      });
+    </script>
+  </body>
+</html>
