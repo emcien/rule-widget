@@ -18,6 +18,7 @@ var RuleTree = (function() {
         xhr.setRequestHeader('Authorization', _this.token);
       },
       success: function(data) {
+        console.log(data)
         _this.rules[_this.depth] = data.data;
         _getCategories.call(_this);
         _this.callback.call(_this);
@@ -40,7 +41,9 @@ var RuleTree = (function() {
         name: _item,
         id: _itemId,
         freq: r.cluster_frequency,
-        cprob: r.conditional_probability
+        cprob: r.conditional_probability,
+        outcome_name: r.outcome_item_name,
+        lift: r.lift
       };
 
       if (!_this.categories[_cat]) { _this.categories[_cat] = []; }
@@ -61,7 +64,7 @@ var RuleTree = (function() {
     this.depth = 1;
     this.rules = {};
     this.categories = {};
-    this.outcome = 2;
+    this.outcome = 1;
     this.rule = [];
     this.ruleString = [];
 

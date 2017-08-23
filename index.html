@@ -1,29 +1,54 @@
-<html>
-  <head>
-    <script src="https://fastcdn.org/Underscore.js/1.8.3/underscore-min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="rule_tree.js"></script>
+<!doctype html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <title>Emcien Rules Explorer</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/css?family=Raleway:200,300,400,500,700" rel="stylesheet">
+        <link rel="stylesheet" href="css/page.css">
+        <script src="https://fastcdn.org/Underscore.js/1.8.3/underscore-min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="js/rule_tree.js"></script>
   </head>
   <body>
-    <p>Oh, hello there.</p>
+    <header>
+      <div><img src="images/emcien-logo.png" width="131" height="32" alt="Emcien"></div>
+    </header>
 
-    <span class="rule-show">No Rule</span>
+    <div class="stage">
+      <span class="rule-show">Please select a category and item</span>
+    </div>
 
-    <table style="width:100%">
-      <tr>
-        <td class="level-1"></td>
-        <td class="level-2"></td>
-        <td class="level-3"></td>
-        <td class="level-4"></td>
-        <td class="level-5"></td>
-      </tr>
-    </table>
+    <div class="actors">
+      <table>
+        <thead>
+          <tr>
+            <th class="level-1">Level 1</th>
+            <th class="level-2"></th>
+            <th class="level-3"></th>
+            <th class="level-4"></th>
+            <th class="level-5"></th>
+          </tr>
+        <tbody>
+          <tr>
+            <td class="level-1"></td>
+            <td class="level-2"></td>
+            <td class="level-3"></td>
+            <td class="level-4"></td>
+            <td class="level-5"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
 
     <script>
       var callback = function() {
         // erase all content after "depth"
         var _this = this;
         var _depth = this.depth;
+
+        $("th.level-" + _depth).text("Level " + _depth);
 
         for (var i = _depth + 1; i <= 5; i ++) {
           $("td.level-" + i).html("");
@@ -32,13 +57,18 @@
         $("td.level-" + _depth).html("<ul class='parent'>");
 
         var cats = _.keys(this.categories);
+
+        if(cats.length < 1){
+          $("ul.parent", "td.level-" + _depth).append("<li class=\"none\">No Rules Matched</li>");
+        }
+
         for (var i = 0; i < cats.length; i ++) {
           var items = this.categories[cats[i]];
 
           var itemList = "<ul class='child' style='display: none;'>"
           for (var j = 0; j < items.length; j ++) {
             var item = items[j];
-            itemList += "<li class='item' data-id='" + item.id + "' data-cat='" + cats[i] + "'>" + item.name + "</li>";
+            itemList += "<li class='item' data-cprob='" + item.cprob + "' data-outcome='" + item.outcome_name + "' data-id='" + item.id + "' data-cat='" + cats[i] + "'>" + item.name + "</li>";
           }
           itemList += "</ul>"
 
@@ -48,8 +78,10 @@
         $("td.level-" + _depth).append("</ul>");
 
         $("li.cat", "ul.parent").on("click", function() {
-          $("ul.child").hide();
-          $("ul.child", this).show();
+          $("ul.child").hide().parent("li");
+          $("td.level-" + _depth).find(".active").removeClass("active");
+
+          $("ul.child", this).show().parent("li").addClass("active");
         });
 
         $("li.item", "td.level-" + _depth).on("click", function() {
@@ -59,14 +91,18 @@
           _this.rule.length = _depth - 1;
           _this.ruleString.length = _depth - 1;
           _this.rule[_depth - 1] = id;
-          _this.ruleString[_depth - 1] = cat + "::" + name;
-          $(".rule-show").html(_this.ruleString.join(","));
+          _this.ruleString[_depth - 1] = "<strong>" + cat + "::" + name + "</strong>";
+          _this.outcome_name = "<span class=\"outcome\">" + $(this).data().outcome + "</span>";
+          _this.cprob = Math.round(($(this).data().cprob * 100), -2) + "%"
+
+          $(".rule-show").html("Transaction containing " + _this.ruleString.join(" and ") + " have a " + _this.cprob + " of containing " + _this.outcome_name);
+
           _this.dig(_depth + 1);
         });
       };
 
       $(document).ready(function() {
-        window.ruleTree = new RuleTree("http://localhost:3000", "wn5my862vnh2bgxnms734kng", "91526629", callback);
+        window.ruleTree = new RuleTree("https://preview.emcien.com", "pgm84gofwdzn41v47n1hsjj8", "88267158", callback);
         ruleTree.dig();
       });
     </script>

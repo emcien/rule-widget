@@ -1,0 +1,98 @@
+* {
+  border-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font: normal 13px/18px 'Raleway', sans-serif;
+  background: #f7f7f7;
+  color: #373737;
+}
+
+header{
+  background: #103d52;
+  padding: 10px 0 5px 15px;
+  border-bottom: #fff solid 1px;
+}
+
+header div{
+  width: 81%;
+  margin: 0 auto;
+}
+
+.stage{
+  margin: 30px auto;
+  width: 80%;
+  text-align: center;
+  border-radius: 6px;
+  border: dotted 1px #a7a7a7;
+  padding: 45px 0;
+  background: #fff;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 200;
+  color: #000;
+}
+
+.stage strong{
+  font-weight: 700;
+  color: #34CF62;
+  white-space: nowrap;
+}
+
+.rule-show .outcome{
+  font-weight: 700;
+  color: #000;
+  white-space: nowrap;
+}
+
+.actors{
+  width: 80%;
+  text-align: left;
+  margin: 45px auto;
+}
+
+td{
+  vertical-align: top;
+  padding: 0 60px 0 0;
+}
+
+th{
+  color: #676767;
+  font-weight: 400;
+}
+
+ul.parent li{
+  list-style: none;
+  padding: 5px 0;
+  color: #03afe5;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+ul.parent li:hover{
+  color: #e9118c;
+  cursor: pointer;
+}
+
+ul.parent li.active{
+  color: #103d52;
+  font-weight: 700;
+}
+
+ul.parent li.none{
+  color: #f00;
+  font-weight: 500;
+}
+
+ul.parent li.none:hover{
+  color: #f00;
+  cursor: default;
+}
+
+ul.child li{
+  margin: 0 0 0 30px;
+  color: #103d52;
+  padding: 3px 0;
+}
