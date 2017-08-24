@@ -18,7 +18,6 @@ var RuleTree = (function() {
         xhr.setRequestHeader('Authorization', _this.token);
       },
       success: function(data) {
-        console.log(data)
         _this.rules[_this.depth] = data.data;
         _getCategories.call(_this);
         _this.callback.call(_this);

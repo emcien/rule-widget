@@ -56,35 +56,49 @@
 
         $("td.level-" + _depth).html("<ul class='parent'>");
 
-        var cats = _.keys(this.categories);
+        var cat_pills = [];
+        var categories_count = _.keys(this.categories).length;
 
-        if(cats.length < 1){
+        for (var i = 0; i < categories_count; i ++) {
+          var category_name = _.keys(this.categories)[i];
+          cat_pills.push("<span class=\"category-pill\">" + category_name + "</span>")
+        }
+
+        if(cat_pills.length < 1){
           $("ul.parent", "td.level-" + _depth).append("<li class=\"none\">No Rules Matched</li>");
         }
 
+        var cats = _.keys(this.categories);
         for (var i = 0; i < cats.length; i ++) {
           var items = this.categories[cats[i]];
+          items = _.sortBy(items, "cprob").reverse();
 
           var itemList = "<ul class='child' style='display: none;'>"
           for (var j = 0; j < items.length; j ++) {
             var item = items[j];
-            itemList += "<li class='item' data-cprob='" + item.cprob + "' data-outcome='" + item.outcome_name + "' data-id='" + item.id + "' data-cat='" + cats[i] + "'>" + item.name + "</li>";
+            var pretty_prob = Math.round(item.cprob * 100, -2) + "%";
+            itemList += "<li class='item' data-cprob='" + item.cprob + "' data-outcome='" + item.outcome_name + "' data-id='" + item.id + "' data-cat='" + cats[i] + "'><span class=\"spark-bar\"><span class=\"spark-bar-fill\" style=\"width:" + (item.cprob * 30) + "px\"></span></span><span class=\"item-pill\">" + item.name + "</span><span class=\"side-prob\">" + pretty_prob + "</span></li>";
           }
           itemList += "</ul>"
 
-          $("ul.parent", "td.level-" + _depth).append("<li class='cat'>" + cats[i] + itemList + "</li>");
+          $("ul.parent", "td.level-" + _depth).append("<li class='cat'>" + cat_pills[i] + itemList + "</li>");
         }
 
         $("td.level-" + _depth).append("</ul>");
 
         $("li.cat", "ul.parent").on("click", function() {
-          $("ul.child").hide().parent("li");
+          $("ul.child", "td.level-" + _depth).hide().parent("li");
+
           $("td.level-" + _depth).find(".active").removeClass("active");
 
-          $("ul.child", this).show().parent("li").addClass("active");
+          $("ul.child", this).show();
         });
 
         $("li.item", "td.level-" + _depth).on("click", function() {
+          $("li.item", "td.level-" + _depth).removeClass("active-item");
+          $("li.cat", "td.level-" + _depth).removeClass("active");
+          $(this).addClass("active-item");
+
           var id = $(this).data().id.toString();
           var cat = $(this).data().cat;
           var name = $(this).html();
@@ -102,7 +116,7 @@
       };
 
       $(document).ready(function() {
-        window.ruleTree = new RuleTree("https://preview.emcien.com", "pgm84gofwdzn41v47n1hsjj8", "88267158", callback);
+        window.ruleTree = new RuleTree("https://preview.emcien.com", "", "", callback);
         ruleTree.dig();
       });
     </script>
