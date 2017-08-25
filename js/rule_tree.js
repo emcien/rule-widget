@@ -98,6 +98,12 @@ var RuleTree = (function() {
       },
       success: function(data) {
         _this.catOrder = _.map(data.data, function(d) { return d.category_name; });
+
+        _this.catImpacts = {};
+        _.each(data.data, function(d) {
+          _this.catImpacts[d.category_name] = d.category_outcome_impact;
+        });
+
         callback.call(_this);
       },
       error: function(data) {
@@ -120,6 +126,7 @@ var RuleTree = (function() {
     this.rules = {};
     this.categories = {};
     this.catOrder = [];
+    this.catImpacts = {};
     this.outcomes = [];
     this.rule = [];
     this.ruleString = [];

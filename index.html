@@ -77,7 +77,7 @@
         var cats = _.intersection(this.catOrder, _.keys(this.categories));
 
         for (var i = 0; i < cats.length; i ++) {
-          cat_pills.push("<span class=\"category-pill\">" + cats[i] + "</span>");
+          cat_pills.push("<span class=\"category-pill\" data-impact=" + this.catImpacts[cats[i]] + ">" + cats[i] + "</span>");
         }
 
         if(cat_pills.length < 1){
