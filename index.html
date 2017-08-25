@@ -25,6 +25,11 @@
       <span class="submit">GO</span>
     </div>
 
+    <div class="outcome" style="display:none;">
+      <label for="outcome">Outcome</label>
+      <select class="outcome-selector" name="outcome"></select>
+    </div>
+
     <div class="stage">
       <span class="rule-show">Please select a category and item</span>
     </div>
@@ -125,6 +130,24 @@
         });
       };
 
+      var outcomeCallback = function() {
+        // we want to re-hide it if we're submitting a different report
+        $(".outcome").hide();
+
+        // add the placeholder
+        $("select.outcome-selector").html("<option value='' disabled selected hidden>Select an outcome</option>");
+
+        // fill in all the options that have been populated
+        for (var i = 0; i < ruleTree.outcomes.length; i ++) {
+          var outcome = ruleTree.outcomes[i];
+          var name = outcome.category + "::" + outcome.name;
+          $("select.outcome-selector").append("<option value=" + outcome.id + ">" + name + "</option>");
+        }
+
+        $(".outcome").show();
+      };
+
+
       $(document).ready(function() {
         // retrieve input values from local storage
         $("input").each(function() {
@@ -132,13 +155,20 @@
         });
 
         var opts = {};
-        $('.submit').on("click", function() {
+        $(".submit").on("click", function() {
           $("input").each(function() {
             localStorage.setItem(this.name, this.value);
             opts[this.name] = this.value;
           });
 
           window.ruleTree = new RuleTree(opts.server, opts.token, opts.report, callback);
+
+          // fetch the outcomes and populate the option dropdown with the outcomes
+          ruleTree.fetchOutcomes(outcomeCallback);
+        });
+
+        $("select.outcome-selector").change(function() {
+          ruleTree.outcome = this.value;
           ruleTree.dig();
         });
       });

@@ -50,6 +50,38 @@ var RuleTree = (function() {
     });
   };
 
+  var _getOutcomes = function(callback) {
+    var _this = this;
+
+    var url = _this.url + "/api/v1/reports/" + _this.id + "/outcomes?page=1&size=100";
+
+    $.ajax({
+      url: url,
+      method: "GET",
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', _this.token);
+      },
+      success: function(data) {
+        var outcomes = data.data;
+
+        for (var i = 0; i < outcomes.length; i ++) {
+          var outcome = {
+            name: outcomes[i].item_id,
+            category: outcomes[i].category_name,
+            id: outcomes[i].id
+          };
+
+          _this.outcomes.push(outcome);
+        }
+
+        callback.call(_this);
+      },
+      error: function(data) {
+        debugger;
+      }
+    });
+  };
+
   var RuleTree = function RuleTree(url, token, id, callback) {
     if (url == null || token == null || id == null) {
       var msg = "url, token and id must be passed to RuleTree constructor";
@@ -63,12 +95,16 @@ var RuleTree = (function() {
     this.depth = 1;
     this.rules = {};
     this.categories = {};
-    this.outcome = 1;
+    this.outcomes = [];
     this.rule = [];
     this.ruleString = [];
 
     _this = this;
   };
+
+  RuleTree.prototype.fetchOutcomes = function(callback) {
+    _getOutcomes.call(_this, callback);
+  }
 
   RuleTree.prototype.dig = function(depth) {
     _this.depth = depth || _this.rule.length + 1;
