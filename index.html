@@ -169,6 +169,7 @@
 
         $("select.outcome-selector").change(function() {
           ruleTree.outcome = this.value;
+          ruleTree.rule = [];
 
           ruleTree.fetchCategories(function() {
             ruleTree.dig();
