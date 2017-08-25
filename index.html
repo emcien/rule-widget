@@ -72,18 +72,18 @@
         $("td.level-" + _depth).html("<ul class='parent'>");
 
         var cat_pills = [];
-        var categories_count = _.keys(this.categories).length;
 
-        for (var i = 0; i < categories_count; i ++) {
-          var category_name = _.keys(this.categories)[i];
-          cat_pills.push("<span class=\"category-pill\">" + category_name + "</span>")
+        // this will use the catOrder ordering, but only include keys from the categories list
+        var cats = _.intersection(this.catOrder, _.keys(this.categories));
+
+        for (var i = 0; i < cats.length; i ++) {
+          cat_pills.push("<span class=\"category-pill\">" + cats[i] + "</span>");
         }
 
         if(cat_pills.length < 1){
           $("ul.parent", "td.level-" + _depth).append("<li class=\"none\">No Rules Matched</li>");
         }
 
-        var cats = _.keys(this.categories);
         for (var i = 0; i < cats.length; i ++) {
           var items = this.categories[cats[i]];
           items = _.sortBy(items, "cprob").reverse();
@@ -169,7 +169,10 @@
 
         $("select.outcome-selector").change(function() {
           ruleTree.outcome = this.value;
-          ruleTree.dig();
+
+          ruleTree.fetchCategories(function() {
+            ruleTree.dig();
+          });
         });
       });
     </script>

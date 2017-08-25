@@ -19,7 +19,7 @@ var RuleTree = (function() {
       },
       success: function(data) {
         _this.rules[_this.depth] = data.data;
-        _getCategories.call(_this);
+        _parseCategories.call(_this);
         _this.callback.call(_this);
       },
       error: function(data) {
@@ -28,7 +28,7 @@ var RuleTree = (function() {
     });
   };
 
-  var _getCategories = function() {
+  var _parseCategories = function() {
     var _this = this;
     _.each(this.rules[this.depth], function(r) {
       var _itemIds = r.item_ids.slice(1,-1).split("|");
@@ -48,6 +48,8 @@ var RuleTree = (function() {
       if (!_this.categories[_cat]) { _this.categories[_cat] = []; }
       if (!_.contains(_this.categories[_cat], _itemObj)) { _this.categories[_cat].push(_itemObj); }
     });
+
+
   };
 
   var _getOutcomes = function(callback) {
@@ -82,6 +84,28 @@ var RuleTree = (function() {
     });
   };
 
+  var _getCategories = function(callback) {
+    var _this = this;
+
+    var url = _this.url + "/api/v1/reports/" + _this.id + "/outcomes/" + _this.outcome + "/categories?page=1&size=100";
+    url += "&sort=-category_outcome_impact";
+
+    $.ajax({
+      url: url,
+      method: "GET",
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('Authorization', _this.token);
+      },
+      success: function(data) {
+        _this.catOrder = _.map(data.data, function(d) { return d.category_name; });
+        callback.call(_this);
+      },
+      error: function(data) {
+        debugger;
+      }
+    });
+  };
+
   var RuleTree = function RuleTree(url, token, id, callback) {
     if (url == null || token == null || id == null) {
       var msg = "url, token and id must be passed to RuleTree constructor";
@@ -95,6 +119,7 @@ var RuleTree = (function() {
     this.depth = 1;
     this.rules = {};
     this.categories = {};
+    this.catOrder = [];
     this.outcomes = [];
     this.rule = [];
     this.ruleString = [];
@@ -104,6 +129,10 @@ var RuleTree = (function() {
 
   RuleTree.prototype.fetchOutcomes = function(callback) {
     _getOutcomes.call(_this, callback);
+  }
+
+  RuleTree.prototype.fetchCategories = function(callback) {
+    _getCategories.call(_this, callback);
   }
 
   RuleTree.prototype.dig = function(depth) {
