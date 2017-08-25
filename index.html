@@ -15,6 +15,16 @@
       <div><img src="images/emcien-logo.png" width="131" height="32" alt="Emcien"></div>
     </header>
 
+    <div class="inputs">
+      <label for="server">Server</label>
+      <input type="text" name="server" id="server">
+      <label for="token">Auth Token</label>
+      <input type="text" name="token" id="token">
+      <label for="report">Report</label>
+      <input type="text" name="report" id="report">
+      <span class="submit">GO</span>
+    </div>
+
     <div class="stage">
       <span class="rule-show">Please select a category and item</span>
     </div>
@@ -116,8 +126,21 @@
       };
 
       $(document).ready(function() {
-        window.ruleTree = new RuleTree("https://preview.emcien.com", "", "", callback);
-        ruleTree.dig();
+        // retrieve input values from local storage
+        $("input").each(function() {
+          this.value = localStorage.getItem(this.name);
+        });
+
+        var opts = {};
+        $('.submit').on("click", function() {
+          $("input").each(function() {
+            localStorage.setItem(this.name, this.value);
+            opts[this.name] = this.value;
+          });
+
+          window.ruleTree = new RuleTree(opts.server, opts.token, opts.report, callback);
+          ruleTree.dig();
+        });
       });
     </script>
   </body>

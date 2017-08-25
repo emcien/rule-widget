@@ -21,6 +21,60 @@ header div{
   margin: 0 auto;
 }
 
+.inputs{
+  text-align: center;
+  margin-top: 10px;
+}
+
+.inputs input{
+  margin-right: 20px;
+  border: 1px dotted #a7a7a7;
+  border-radius: 3px;
+}
+
+.inputs .submit{
+  background: #03afe5;
+  background-color: #188ec7;
+  background-repeat: repeat-x;
+  background-image: linear-gradient(to bottom, #1ea3e4, #188ec7);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) fadein(rgba(0, 0, 0, 0.1), 15%);
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+  cursor: pointer;
+  color: #fff;
+  padding: 4px 10px 6px;
+  font-weight: bold;
+  font-size: 13px;
+  line-height: 14px;
+  border: 1px solid #188ec7;
+  border-bottom-color: #126d99;
+  border-radius: 3px;
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-transition: linear 0.1s all;
+  -o-transition: linear 0.1s all;
+  -webkit-transition: linear 0.1s all;
+  transition: linear 0.1s all;
+  background: #e6e6e6;
+  background-color: #e6e6e6;
+  background-repeat: repeat-x;
+  background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) fadein(rgba(0, 0, 0, 0.1), 15%);
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 12px;
+  padding: 5px 10px;
+  border-color: #ccc;
+  border-bottom-color: #bbb;
+  color: #646667;
+  white-space: nowrap;
+  text-shadow: rgba(255, 255, 255, 0.74609) 0 1px 1px;
+}
+
 .stage{
   margin: 30px auto;
   width: 60%;
