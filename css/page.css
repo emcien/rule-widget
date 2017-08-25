@@ -141,9 +141,14 @@ ul.parent li{
   white-space: nowrap;
 }
 
-ul.parent li:hover{
-  color: #e9118c;
-  cursor: pointer;
+ul.parent li i{
+  font-size: 13px;
+  color: #34CF62;
+  margin: 0 1px 0 0;
+}
+
+ul.parent li i.fa-circle-o{
+  color: #b7b7b7;
 }
 
 ul.parent li.active{
@@ -166,6 +171,24 @@ ul.child li{
   padding: 3px 0;
 }
 
+ul.child li .item-pill{
+  margin-left: 65px;
+}
+
+ul.parent li i.arrow-up{
+  color: #34CF62;
+}
+
+ul.parent li i.arrow-down {
+  color: #f00;
+}
+
+.lift{
+  margin: 0 0 0 5px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
 .category-pill{
   background-color: rgb(25, 148, 208);
   background-image: linear-gradient(rgb(3, 175, 229), rgb(25, 148, 208));
@@ -185,7 +208,7 @@ ul.child li{
   height: 12px;
   line-height: 12px;
   margin-bottom: 5px;
-  margin-left: 0;
+  margin-left: 5px;
   margin-right: 0;
   margin-top: 5px;
   max-width: 500px;

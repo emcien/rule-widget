@@ -5,6 +5,7 @@
         <title>Emcien Rules Explorer</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/css?family=Raleway:200,300,400,500,700" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="css/page.css">
         <script src="https://fastcdn.org/Underscore.js/1.8.3/underscore-min.js"></script>
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -76,8 +77,33 @@
         // this will use the catOrder ordering, but only include keys from the categories list
         var cats = _.intersection(this.catOrder, _.keys(this.categories));
 
+        var _dots = function(this_impact, max_impact){
+          var categoryOutcomeImpactPct = (this_impact / max_impact) * 100;
+
+          var _els = [];
+          var fullCircles = Math.floor(categoryOutcomeImpactPct / 20);
+          for (var x = 0; x < fullCircles; x++) {
+            _els.push('<i class="fa fa-circle" aria-hidden="true"></i>')
+          }
+
+          var halfCircle = (categoryOutcomeImpactPct % 20) >= 10;
+          if (halfCircle) {
+            _els.push('<i class="fa fa-adjust aria-hidden="true"></i>')
+          }
+
+          var emptyCircles = 5 - fullCircles - halfCircle;
+          for (var y = 0; y < emptyCircles; y++) {
+            _els.push('<i class="fa fa-circle-o" aria-hidden="true"></i>')
+          }
+
+          return _els.reverse().join('');
+        }
+
         for (var i = 0; i < cats.length; i ++) {
-          cat_pills.push("<span class=\"category-pill\" data-impact=" + this.catImpacts[cats[i]] + ">" + cats[i] + "</span>");
+          var max_impact = this.catImpacts[cats[0]];
+          var this_impact = this.catImpacts[cats[i]];
+
+          cat_pills.push("<span title=\"Category Impact: " + this_impact + "\">" + _dots(this_impact, max_impact) + "</span><span class=\"category-pill\" data-impact=" + this_impact + ">" + cats[i] + "</span>");
         }
 
         if(cat_pills.length < 1){
@@ -88,11 +114,28 @@
           var items = this.categories[cats[i]];
           items = _.sortBy(items, "cprob").reverse();
 
+          var _lift = function(lift){
+            var result = "";
+            if(lift == 0){
+              result = "Very Unlikely"
+            }else if(lift > 2){
+              result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " + Math.round(lift, -1) + "X more likely"
+            }else if(lift > 1){
+              result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " + Math.round(lift * 100) + "% more likely"
+            }else if(lift < 0.5){
+              result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " + Math.round(lift, -1) + "X less likely"
+            }else if(lift < 1){
+              result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " + Math.round(lift * 100) + "% less likely"
+            }else{
+              result = "--"
+            }
+            return "<span class=\"lift\">" + result + "</span>";
+          }
+
           var itemList = "<ul class='child' style='display: none;'>"
           for (var j = 0; j < items.length; j ++) {
             var item = items[j];
-            var pretty_prob = Math.round(item.cprob * 100, -2) + "%";
-            itemList += "<li class='item' data-cprob='" + item.cprob + "' data-outcome='" + item.outcome_name + "' data-id='" + item.id + "' data-cat='" + cats[i] + "'><span class=\"spark-bar\"><span class=\"spark-bar-fill\" style=\"width:" + (item.cprob * 30) + "px\"></span></span><span class=\"item-pill\">" + item.name + "</span><span class=\"side-prob\">" + pretty_prob + "</span></li>";
+            itemList += "<li class='item' data-id='" + item.id + "' data-cat='" + cats[i] + "'><span class=\"item-pill\">" + item.name + "</span>" + _lift(item.lift) + "</li>";
           }
           itemList += "</ul>"
 

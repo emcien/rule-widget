@@ -30,12 +30,14 @@ var RuleTree = (function() {
 
   var _parseCategories = function() {
     var _this = this;
+    console.log(this)
     _.each(this.rules[this.depth], function(r) {
       var _itemIds = r.item_ids.slice(1,-1).split("|");
       var _itemPosition = _itemIds.indexOf(_.difference(_itemIds, _this.rule)[0]);
       var _itemId = _itemIds[_itemPosition];
       var _cat = r.category_names.slice(1,-1).split("|")[_itemPosition];
       var _item = r.item_names.slice(1,-1).split("|")[_itemPosition];
+
       var _itemObj = {
         name: _item,
         id: _itemId,
