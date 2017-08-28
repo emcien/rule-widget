@@ -54,6 +54,9 @@
         </table>
       </div>
     </div>
+
+    <div class="loader"><span><img src="images/worker.gif" width="40" height="40" alt=""></span></div>
+
     <script>
       var callback = function() {
         // erase all content after "depth"
@@ -141,6 +144,7 @@
         $("td.level-" + _depth).append("</ul>");
 
         $("li.cat", "td.level-" + _depth + " ul.parent").on("click", function() {
+          $(".loader").fadeIn();
           $("ul.child", "td.level-" + _depth).hide().parent("li");
           $("td.level-" + _depth).find(".active").removeClass("active");
 
@@ -155,6 +159,7 @@
             var level = $(this).parent().parent().data("level");
             ruleTree.fetchCounts.call(this, categoryCallback, level, this);
           }
+          $(".loader").fadeOut();
         });
 
         $("li.item", "td.level-" + _depth).on("click", function() {
@@ -176,7 +181,6 @@
           _this.ruleString[_depth - 1] = "<span class=\"item-pill with-cat\">" + item_name + "<small>" + cat + "</small></span>";
 
           $(".rule-show").html("Transaction containing " + _this.ruleString.join(" and ") + " are " + _lift(lift) + " to contain <span class=\"outcome-text\">" + outcome + "</span><div class=\"sub-text\">" + freq + " Occurrences in Training Data. " + cprob + "% Conditional Probability.<div>");
-
           _this.dig(_depth + 1);
         });
       };
@@ -225,7 +229,7 @@
             opts[this.name] = this.value;
           });
 
-          $(".actors").fadeIn();
+          $(".outcome-selector").css({opacity:1});
 
           window.ruleTree = new RuleTree(opts.server, opts.token, opts.report, callback);
 
@@ -241,6 +245,8 @@
           ruleTree.fetchCategories(function() {
             ruleTree.dig();
           });
+
+          $(".actors").fadeIn();
         });
       });
     </script>
