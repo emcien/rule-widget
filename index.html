@@ -64,7 +64,11 @@
         var _this = this;
         var _depth = this.depth;
 
-        $("th.level-" + _depth).text("Level " + _depth);
+        if(_.keys(_this.categories).length > 0){
+          $("th.level-" + _depth).text("Level " + _depth);
+        }else{
+          $("th.level-" + _depth).text("");
+        }
 
         for (var i = _depth + 1; i <= 5; i ++) {
           $("td.level-" + i).html("");
@@ -103,11 +107,7 @@
           var max_impact = this.catImpacts[cats[0]];
           var this_impact = this.catImpacts[cats[i]];
 
-          cat_pills.push("<span title=\"Category Impact: " + this_impact + "\">" + _dots(this_impact, max_impact) + "</span><span class=\"category-pill\" data-impact=" + this_impact + ">" + cats[i] + "</span>");
-        }
-
-        if(cat_pills.length < 1){
-          $("ul.parent", "td.level-" + _depth).append("<li class=\"none\">No Rules Matched</li>");
+          cat_pills.push("<span class=\"dots\" title=\"Category Impact: " + this_impact + "\">" + _dots(this_impact, max_impact) + "</span><span class=\"category-pill\" data-impact=" + this_impact + ">" + cats[i] + "</span>");
         }
 
         for (var i = 0; i < cats.length; i ++) {
@@ -119,13 +119,13 @@
             if(lift == 0){
               result = "<span class=\"very-unlikely\">Very Unlikely</span>"
             }else if(lift > 2){
-              result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " + Math.round(lift, -1) + "X more likely"
+              result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " + Math.round(lift, -1) + "<small>X</small> more likely"
             }else if(lift > 1){
-              result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " + Math.round(lift * 100) + "% more likely"
+              result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " + Math.round(lift * 100) + "<small>%</small> more likely"
             }else if(lift < 0.5){
-              result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " + Math.round(lift, -1) + "X less likely"
+              result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " + Math.round(lift, -1) + "<small>X</small> less likely"
             }else if(lift < 1){
-              result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " + Math.round(lift * 100) + "% less likely"
+              result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " + Math.round(lift * 100) + "<small>%</small> less likely"
             }else{
               result = "--"
             }
@@ -135,7 +135,7 @@
           var itemList = "<ul class='child' style='display: none;'>"
           for (var j = 0; j < items.length; j ++) {
             var item = items[j];
-            itemList += "<li class='item' data-outcome='" + item.outcome + "' data-lift='" + item.lift + "' data-id='" + item.id + "' data-name='" + item.name + "' data-cat='" + cats[i] + "'><span class=\"item-pill\">" + item.name + "</span>" + _lift(item.lift) + "</li>";
+            itemList += "<li class='item' data-freq='" + item.freq + "' data-cprob='" + item.cprob + "' data-outcome='" + item.outcome + "' data-lift='" + item.lift + "' data-id='" + item.id + "' data-name='" + item.name + "' data-cat='" + cats[i] + "'><span class=\"item-pill\">" + item.name + "</span>" + _lift(item.lift) + "</li>";
           }
           itemList += "</ul>"
 
@@ -171,13 +171,15 @@
           var lift = $(this).data().lift;
           var item_name = $(this).data().name;
           var outcome = $(this).data().outcome;
+          var freq = $(this).data().freq;
+          var cprob = Math.round((100 * $(this).data().cprob), -1);
 
           _this.rule.length = _depth - 1;
           _this.ruleString.length = _depth - 1;
           _this.rule[_depth - 1] = id;
           _this.ruleString[_depth - 1] = "<span class=\"item-pill with-cat\">" + item_name + "<small>" + cat + "</small></span>";
 
-          $(".rule-show").html("Transaction containing " + _this.ruleString.join(" and ") + " are " + _lift(lift) + " to contain " + outcome);
+          $(".rule-show").html("Transaction containing " + _this.ruleString.join(" and ") + " are " + _lift(lift) + " to contain <span class=\"outcome-text\">" + outcome + "</span><div class=\"sub-text\">" + freq + " Occurrences in Training Data. " + cprob + "% Conditional Probability.<div>");
 
           _this.dig(_depth + 1);
         });
@@ -204,7 +206,11 @@
         $("li.item", this).each(function() {
           var childCount = ruleTree.prefetchCounts[$(this).data("id")];
           $(this).attr("data-children", childCount);
-          $(".item-pill", this).append(" (" + childCount + ")")
+          if(childCount > 0){
+            $(".item-pill", this).addClass("has_children");
+          }else{
+            $(".item-pill", this).addClass("no_children");
+          }
         });
 
         $("ul.child", this).show();

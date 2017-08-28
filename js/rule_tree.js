@@ -43,7 +43,9 @@ var RuleTree = (function() {
         freq: r.cluster_frequency,
         cprob: r.conditional_probability,
         outcome: r.outcome_item_name,
-        lift: r.lift
+        lift: r.lift,
+        freq: r.cluster_frequency,
+        cprob: r.conditional_probability
       };
 
       if (!_this.categories[_cat]) { _this.categories[_cat] = []; }
