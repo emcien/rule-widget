@@ -183,6 +183,10 @@ ul.parent li i.arrow-down {
   color: #f00;
 }
 
+ul.parent li .very-unlikely{
+  color: #979797;
+}
+
 .lift{
   margin: 0 0 0 5px;
   font-size: 12px;
@@ -249,6 +253,17 @@ ul.parent li i.arrow-down {
   text-shadow: rgb(255, 255, 255) 1px 1px 1px;
   vertical-align: middle;
   white-space: nowrap;
+}
+
+.with-cat{
+  font-size: 11px;
+  height: 21px;
+}
+
+.with-cat small{
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
 }
 
 .item-pill:hover,

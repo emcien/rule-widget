@@ -2,7 +2,7 @@
 <html lang="">
     <head>
         <meta charset="utf-8">
-        <title>Emcien Rules Explorer</title>
+        <title>Emcien Rules</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/css?family=Raleway:200,300,400,500,700" rel="stylesheet">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -117,7 +117,7 @@
           var _lift = function(lift){
             var result = "";
             if(lift == 0){
-              result = "Very Unlikely"
+              result = "<span class=\"very-unlikely\">Very Unlikely</span>"
             }else if(lift > 2){
               result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " + Math.round(lift, -1) + "X more likely"
             }else if(lift > 1){
@@ -135,7 +135,7 @@
           var itemList = "<ul class='child' style='display: none;'>"
           for (var j = 0; j < items.length; j ++) {
             var item = items[j];
-            itemList += "<li class='item' data-id='" + item.id + "' data-cat='" + cats[i] + "'><span class=\"item-pill\">" + item.name + "</span>" + _lift(item.lift) + "</li>";
+            itemList += "<li class='item' data-outcome='" + item.outcome + "' data-lift='" + item.lift + "' data-id='" + item.id + "' data-name='" + item.name + "' data-cat='" + cats[i] + "'><span class=\"item-pill\">" + item.name + "</span>" + _lift(item.lift) + "</li>";
           }
           itemList += "</ul>"
 
@@ -168,15 +168,16 @@
 
           var id = $(this).data().id.toString();
           var cat = $(this).data().cat;
-          var name = $(this).html();
+          var lift = $(this).data().lift;
+          var item_name = $(this).data().name;
+          var outcome = $(this).data().outcome;
+
           _this.rule.length = _depth - 1;
           _this.ruleString.length = _depth - 1;
           _this.rule[_depth - 1] = id;
-          _this.ruleString[_depth - 1] = "<strong>" + cat + "::" + name + "</strong>";
-          _this.outcome_name = "<span class=\"outcome\">" + $(this).data().outcome + "</span>";
-          _this.cprob = Math.round(($(this).data().cprob * 100), -2) + "%"
+          _this.ruleString[_depth - 1] = "<span class=\"item-pill with-cat\">" + item_name + "<small>" + cat + "</small></span>";
 
-          $(".rule-show").html("Transaction containing " + _this.ruleString.join(" and ") + " have a " + _this.cprob + " of containing " + _this.outcome_name);
+          $(".rule-show").html("Transaction containing " + _this.ruleString.join(" and ") + " are " + _lift(lift) + " to contain " + outcome);
 
           _this.dig(_depth + 1);
         });
