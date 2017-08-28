@@ -12,86 +12,93 @@ body {
 
 header {
   background: #103d52;
-  padding: 10px 0 5px 15px;
+  padding: 10px 0 5px 0;
   border-bottom: #fff solid 1px;
 }
 
 header div {
   width: 61%;
   margin: 0 auto;
+  position: relative;
 }
 
 .inputs {
-  text-align: center;
-  margin-top: 10px;
+  position: absolute;
+  top: 2px;
+  right: 0;
+  text-align: right;
 }
 
-.inputs input {
-  margin-right: 20px;
-  border: 1px dotted #a7a7a7;
+.submit{
+  background-color: rgb(16, 61, 82);
+  background-image: linear-gradient(rgb(59, 96, 113), rgb(16, 61, 82));
+  border-bottom-color: rgb(6, 23, 31);
   border-radius: 3px;
-}
-
-.inputs .submit {
-  background: #03afe5;
-  background-color: #188ec7;
-  background-repeat: repeat-x;
-  background-image: linear-gradient(to bottom, #1ea3e4, #188ec7);
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) fadein(rgba(0, 0, 0, 0.1), 15%);
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0;
+  border: solid 1px rgb(14, 55, 73);
+  box-shadow: rgba(255, 255, 255, 0.2) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.35) 0px 0px 2px 0px;
+  color: #ff9;
   cursor: pointer;
-  color: #fff;
-  padding: 4px 10px 6px;
-  font-weight: bold;
-  font-size: 13px;
+  display: inline-block;
+  font-size: 16px;
+  font-style: normal;
+  height: 14px;
   line-height: 14px;
-  border: 1px solid #188ec7;
-  border-bottom-color: #126d99;
-  border-radius: 3px;
-  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.05);
-  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.05);
-  -moz-transition: linear 0.1s all;
-  -o-transition: linear 0.1s all;
-  -webkit-transition: linear 0.1s all;
-  transition: linear 0.1s all;
-  background: #e6e6e6;
-  background-color: #e6e6e6;
-  background-repeat: repeat-x;
-  background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) fadein(rgba(0, 0, 0, 0.1), 15%);
-  font-weight: normal;
-  font-size: 12px;
-  line-height: 12px;
-  padding: 5px 10px;
-  border-color: #ccc;
-  border-bottom-color: #bbb;
-  color: #646667;
-  white-space: nowrap;
-  text-shadow: rgba(255, 255, 255, 0.74609) 0 1px 1px;
+  margin: 0 10px 0 2px;
+  padding-bottom: 6px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 5px;
+  text-decoration-color: rgb(255, 255, 255);
+  text-decoration-style: solid;
+  transition-delay: 0;
+  transition-duration: 0.1s;
+  transition-property: all;
+  transition-timing-function: linear;
+}
+
+input[type="text"],
+input[type="password"] {
+  background: #678491;
+  border: solid 1px #7D95A1;
+  border-radius: 2px;
+  padding: 5px;
+  margin: 0 0 0 3px;
+  position: relative;
+  top: -2px;
+  color: #fff;
+}
+
+#report,
+#token{
+  width: 60px;
+}
+
+#server{
+  width: 150px;
 }
 
 .outcome {
-  margin-top: 20px;
   text-align: center;
 }
 
-.outcome select {
-  border: 1px dotted #a7a7a7;
-  border-radius: 3px;
-  background: white;
+.outcome-selector {
+  padding: 10px;
+  font-size: 15px;
+  width: 200px;
+  display: inline-block;
+  height: 24px;
+  position: relative;
+  top: -2px;
+}
+
+.outcome-selector option [disabled] {
+  color: #c7c7c7;
 }
 
 .stage {
-  margin: 30px auto;
-  width: 60%;
+  margin: 0 auto 30px auto;
   text-align: center;
-  border-radius: 6px;
-  border: dotted 1px #a7a7a7;
+  border-bottom: dotted 1px #c7c7c7;
   padding: 45px 30px;
   background: #fff;
   font-size: 24px;
@@ -136,10 +143,20 @@ header div {
   font-size: 18px;
 }
 
+.rule-show em{
+  font-style: normal;
+  font-weight: 400;
+  color: #103d52;
+}
+
 .actors {
   width: 60%;
   text-align: left;
   margin: 30px auto;
+  display: none;
+}
+
+.actors-slot{
   border-radius: 6px;
   border: dotted 1px #a7a7a7;
   padding: 30px;
@@ -365,4 +382,11 @@ ul.parent li .very-unlikely {
   font-weight: 300;
   font-size: 14px;
   color: #646667;
+}
+
+h2 {
+  font-weight: 200;
+  font-size: 16px;
+  line-height: 24px;
+  color: #103d52;
 }

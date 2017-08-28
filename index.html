@@ -13,51 +13,47 @@
   </head>
   <body>
     <header>
-      <div><img src="images/emcien-logo.png" width="131" height="32" alt="Emcien"></div>
+      <div>
+        <img src="images/emcien-logo.png" width="131" height="32" alt="Emcien">
+
+        <div class="inputs">
+          <input type="text" name="server" id="server" placeholder="Server">
+          <input type="password" name="token" id="token" placeholder="Auth Token">
+          <input type="text" name="report" id="report" placeholder="Report ID">
+          <span class="submit"><i class="fa-arrow-circle-right fa"></i></span>
+          <select class="outcome-selector" name="outcome"><option disabled="disabled" selected>Load a Report</option></select>
+        </div>
+      </div>
     </header>
 
-    <div class="inputs">
-      <label for="server">Server</label>
-      <input type="text" name="server" id="server">
-      <label for="token">Auth Token</label>
-      <input type="text" name="token" id="token">
-      <label for="report">Report</label>
-      <input type="text" name="report" id="report">
-      <span class="submit">GO</span>
-    </div>
-
-    <div class="outcome" style="display:none;">
-      <label for="outcome">Outcome</label>
-      <select class="outcome-selector" name="outcome"></select>
-    </div>
-
     <div class="stage">
-      <span class="rule-show">Please select a category and item</span>
+      <span class="rule-show">Welcome to <em>Emcien Rules Explorer</em></span>
     </div>
 
     <div class="actors">
-      <table>
-        <thead>
-          <tr>
-            <th class="level-1">Level 1</th>
-            <th class="level-2"></th>
-            <th class="level-3"></th>
-            <th class="level-4"></th>
-            <th class="level-5"></th>
-          </tr>
-        <tbody>
-          <tr>
-            <td class="level-1" data-level="1"></td>
-            <td class="level-2" data-level="2"></td>
-            <td class="level-3" data-level="3"></td>
-            <td class="level-4" data-level="4"></td>
-            <td class="level-5" data-level="5"></td>
-          </tr>
-        </tbody>
-      </table>
+      <h2>Select Categorys & Items to Explore</h2>
+      <div class="actors-slot">
+        <table>
+          <thead>
+            <tr>
+              <th class="level-1"></th>
+              <th class="level-2"></th>
+              <th class="level-3"></th>
+              <th class="level-4"></th>
+              <th class="level-5"></th>
+            </tr>
+          <tbody>
+            <tr>
+              <td class="level-1" data-level="1"></td>
+              <td class="level-2" data-level="2"></td>
+              <td class="level-3" data-level="3"></td>
+              <td class="level-4" data-level="4"></td>
+              <td class="level-5" data-level="5"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-
-
     <script>
       var callback = function() {
         // erase all content after "depth"
@@ -150,7 +146,7 @@
 
           var children = $("li.item", this).first().attr('data-children');
           if (typeof children !== typeof undefined && children !== false) {
-            $("ul.child", this).show();
+            $("ul.child", this).fadeIn();
           } else {
             // rule count prefetch!
             var itemIds = _.map($("li.item", this), function(d) { return $(d).data("id").toString(); });
@@ -199,7 +195,7 @@
           $("select.outcome-selector").append("<option value=" + outcome.id + ">" + name + "</option>");
         }
 
-        $(".outcome").show();
+        $(".outcome").fadeIn();
       };
 
       var categoryCallback = function() {
@@ -213,7 +209,7 @@
           }
         });
 
-        $("ul.child", this).show();
+        $("ul.child", this).fadeIn();
       };
 
       $(document).ready(function() {
@@ -228,6 +224,8 @@
             localStorage.setItem(this.name, this.value);
             opts[this.name] = this.value;
           });
+
+          $(".actors").fadeIn();
 
           window.ruleTree = new RuleTree(opts.server, opts.token, opts.report, callback);
 
