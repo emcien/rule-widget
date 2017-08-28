@@ -142,6 +142,7 @@
         }
 
         $("td.level-" + _depth).append("</ul>");
+        $(".loader").fadeOut();
 
         $("li.cat", "td.level-" + _depth + " ul.parent").on("click", function() {
           $(".loader").fadeIn();
@@ -159,7 +160,6 @@
             var level = $(this).parent().parent().data("level");
             ruleTree.fetchCounts.call(this, categoryCallback, level, this);
           }
-          $(".loader").fadeOut();
         });
 
         $("li.item", "td.level-" + _depth).on("click", function() {
@@ -214,6 +214,7 @@
         });
 
         $("ul.child", this).fadeIn();
+        $(".loader").fadeOut();
       };
 
       $(document).ready(function() {
