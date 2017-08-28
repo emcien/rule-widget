@@ -47,11 +47,11 @@
           </tr>
         <tbody>
           <tr>
-            <td class="level-1"></td>
-            <td class="level-2"></td>
-            <td class="level-3"></td>
-            <td class="level-4"></td>
-            <td class="level-5"></td>
+            <td class="level-1" data-level="1"></td>
+            <td class="level-2" data-level="2"></td>
+            <td class="level-3" data-level="3"></td>
+            <td class="level-4" data-level="4"></td>
+            <td class="level-5" data-level="5"></td>
           </tr>
         </tbody>
       </table>
@@ -144,12 +144,21 @@
 
         $("td.level-" + _depth).append("</ul>");
 
-        $("li.cat", "ul.parent").on("click", function() {
+        $("li.cat", "td.level-" + _depth + " ul.parent").on("click", function() {
           $("ul.child", "td.level-" + _depth).hide().parent("li");
-
           $("td.level-" + _depth).find(".active").removeClass("active");
 
-          $("ul.child", this).show();
+          var children = $("li.item", this).first().attr('data-children');
+          if (typeof children !== typeof undefined && children !== false) {
+            $("ul.child", this).show();
+          } else {
+            // rule count prefetch!
+            var itemIds = _.map($("li.item", this), function(d) { return $(d).data("id").toString(); });
+            ruleTree.prefetchList = itemIds;
+
+            var level = $(this).parent().parent().data("level");
+            ruleTree.fetchCounts.call(this, categoryCallback, level, this);
+          }
         });
 
         $("li.item", "td.level-" + _depth).on("click", function() {
@@ -178,7 +187,7 @@
         $(".outcome").hide();
 
         // add the placeholder
-        $("select.outcome-selector").html("<option value='' disabled selected hidden>Select an outcome</option>");
+        $("select.outcome-selector").html("<option value='' disabled selected>Select an outcome</option>");
 
         // fill in all the options that have been populated
         for (var i = 0; i < ruleTree.outcomes.length; i ++) {
@@ -190,6 +199,15 @@
         $(".outcome").show();
       };
 
+      var categoryCallback = function() {
+        $("li.item", this).each(function() {
+          var childCount = ruleTree.prefetchCounts[$(this).data("id")];
+          $(this).attr("data-children", childCount);
+          $(".item-pill", this).append(" (" + childCount + ")")
+        });
+
+        $("ul.child", this).show();
+      };
 
       $(document).ready(function() {
         // retrieve input values from local storage
@@ -210,6 +228,7 @@
           ruleTree.fetchOutcomes(outcomeCallback);
         });
 
+        // changing an outcome resets the rule
         $("select.outcome-selector").change(function() {
           ruleTree.outcome = this.value;
           ruleTree.rule = [];

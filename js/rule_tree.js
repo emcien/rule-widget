@@ -30,7 +30,6 @@ var RuleTree = (function() {
 
   var _parseCategories = function() {
     var _this = this;
-    console.log(this)
     _.each(this.rules[this.depth], function(r) {
       var _itemIds = r.item_ids.slice(1,-1).split("|");
       var _itemPosition = _itemIds.indexOf(_.difference(_itemIds, _this.rule)[0]);
@@ -114,6 +113,41 @@ var RuleTree = (function() {
     });
   };
 
+  var _getCounts = function(callback, level, scope) {
+    var _this = this;
+    var requests = [];
+    _this.prefetchCounts = {};
+
+    _.each(_this.prefetchList, function(d) {
+      var ruleCombo = _this.rule.slice(0, level - 1).concat([d]);
+
+      var url = _this.url + "/api/v1/reports/" + _this.id + "/rules?page=1&size=100";
+      url += "&filter[size]=" + (level + 1);
+      url += "&filter[outcome_item_id]=" + _this.outcome;
+      url += "&with_item_ids=" + ruleCombo.join(",");
+
+      var request = $.ajax({
+        url: url,
+        method: "GET",
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader('Authorization', _this.token);
+        },
+        success: function(data) {
+          _this.prefetchCounts[d] = data.meta.records_total;
+        },
+        error: function(data) {
+          debugger;
+        }
+      });
+
+      requests.push(request);
+    });
+
+    $.when.apply(this, requests).done(function() {
+      callback.call(scope);
+    });
+  };
+
   var RuleTree = function RuleTree(url, token, id, callback) {
     if (url == null || token == null || id == null) {
       var msg = "url, token and id must be passed to RuleTree constructor";
@@ -143,6 +177,10 @@ var RuleTree = (function() {
   RuleTree.prototype.fetchCategories = function(callback) {
     _getCategories.call(_this, callback);
   }
+
+  RuleTree.prototype.fetchCounts = function(callback, level, scope) {
+    _getCounts.call(_this, callback, level, scope);
+  };
 
   RuleTree.prototype.dig = function(depth) {
     _this.depth = depth || _this.rule.length + 1;
