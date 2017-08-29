@@ -32,6 +32,10 @@
 
     <div class="actors">
       <h2>Select Categorys & Items to Explore</h2>
+      <span class="lift-toggle">
+        <input type="checkbox" id="lift" name="lift">
+        <label for="lift">Hide Negative Lift</label>
+      </span>
       <div class="actors-slot">
         <table>
           <thead>
@@ -60,6 +64,19 @@
     <div class="loader"><span><img src="images/worker.gif" width="40" height="40" alt=""></span></div>
 
     <script>
+      function getStyleRule(name) {
+        for(var i=0; i<document.styleSheets.length; i++) {
+          var ix, sheet = document.styleSheets[i];
+          if (sheet.cssRules && sheet.cssRules.length) {
+            for (ix=0; ix<sheet.cssRules.length; ix++) {
+              if (sheet.cssRules[ix].selectorText === name)
+                  return sheet.cssRules[ix].style;
+            }
+          }
+        }
+        return null;
+      }
+
       var callback = function() {
         // erase all content after "depth"
         var _this = this;
@@ -138,7 +155,8 @@
           var itemList = "<ul class='child' style='display: none;'>"
           for (var j = 0; j < items.length; j ++) {
             var item = items[j];
-            itemList += "<li class='item' data-freq='" + item.freq + "' data-cprob='" + item.cprob + "' data-outcome='" + item.outcome + "' data-lift='" + item.lift + "' data-id='" + item.id + "' data-name='" + item.name + "' data-cat='" + cats[i] + "'><span class=\"item-pill\">" + item.name + "</span>" + _lift(item.lift) + "</li>";
+            var liftClass = item.lift > 1 ? "lift-pos" : "lift-neg";
+            itemList += "<li class='item " + liftClass + "' data-freq='" + item.freq + "' data-cprob='" + item.cprob + "' data-outcome='" + item.outcome + "' data-lift='" + item.lift + "' data-id='" + item.id + "' data-name='" + item.name + "' data-cat='" + cats[i] + "'><span class=\"item-pill\">" + item.name + "</span>" + _lift(item.lift) + "</li>";
           }
           itemList += "</ul>"
 
@@ -247,6 +265,17 @@
 
           // fetch the outcomes and populate the option dropdown with the outcomes
           ruleTree.fetchOutcomes(outcomeCallback);
+        });
+
+        // toggle show/hide lift switch
+        $("#lift").change(function() {
+          var rule = getStyleRule('.lift-neg');
+
+          if ($(this).is(":checked")) {
+            rule.display = "none";
+          } else {
+            rule.display = "list-item";
+          }
         });
 
         // changing an outcome resets the rule

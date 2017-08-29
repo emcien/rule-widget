@@ -411,3 +411,11 @@ h2 {
   font-size: 12px;
   font-weight: 200;
 }
+
+.lift-pos {
+  display: list-item;
+}
+
+.lift-neg {
+  display: list-item;
+}
