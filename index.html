@@ -83,7 +83,7 @@
         // this will use the catOrder ordering, but only include keys from the categories list
         var cats = _.intersection(this.catOrder, _.keys(this.categories));
 
-        var _dots = function(this_impact, max_impact){
+        var _dots = function(this_impact, max_impact, min_impact){
           var categoryOutcomeImpactPct = (this_impact / max_impact) * 100;
 
           var _els = [];
@@ -107,9 +107,10 @@
 
         for (var i = 0; i < cats.length; i ++) {
           var max_impact = this.catImpacts[cats[0]];
+          var min_impact = this.catImpacts[cats[cats.length - 1]];
           var this_impact = this.catImpacts[cats[i]];
 
-          cat_pills.push("<span class=\"dots\" title=\"Category Impact: " + this_impact + "\">" + _dots(this_impact, max_impact) + "</span><span class=\"category-pill\" data-impact=" + this_impact + ">" + cats[i] + "</span>");
+          cat_pills.push("<span class=\"dots\" title=\"Category Impact: " + this_impact + "\">" + _dots(this_impact, max_impact, min_impact) + "</span><span class=\"category-pill\" data-impact=" + this_impact + ">" + cats[i] + "</span>");
         }
 
         for (var i = 0; i < cats.length; i ++) {
@@ -147,7 +148,7 @@
         $("td.level-" + _depth).append("</ul>");
         $(".loader").fadeOut();
 
-        $("li.cat", "td.level-" + _depth + " ul.parent").on("click", function() {
+        $("span.category-pill", "td.level-" + _depth + " ul.parent").on("click", function() {
           $(".loader").fadeIn();
 
           for (var i = _depth + 1; i <= 5; i ++) {
@@ -158,16 +159,17 @@
           $("ul.child", "td.level-" + _depth).hide().parent("li");
           $("td.level-" + _depth).find(".active").removeClass("active");
 
-          var children = $("li.item", this).first().attr('data-children');
+          var children = $("li.item", $(this).parent()).first().attr('data-children');
           if (typeof children !== typeof undefined && children !== false) {
-            $("ul.child", this).fadeIn();
+            $("ul.child", $(this).parent()).fadeIn();
+            $(".loader").fadeOut();
           } else {
             // rule count prefetch!
-            var itemIds = _.map($("li.item", this), function(d) { return $(d).data("id").toString(); });
+            var itemIds = _.map($("li.item", $(this).parent()), function(d) { return $(d).data("id").toString(); });
             ruleTree.prefetchList = itemIds;
 
-            var level = $(this).parent().parent().data("level");
-            ruleTree.fetchCounts.call(this, categoryCallback, level, this);
+            var level = $(this).parent().parent().parent().data("level");
+            ruleTree.fetchCounts.call(this, categoryCallback, level, $(this).parent());
           }
         });
 
@@ -195,7 +197,7 @@
       };
 
       var outcomeCallback = function() {
-        // we want to re-hide it if we're submitting a different report
+        // we want to re-hide it if were submitting a different report
         $(".outcome").hide();
 
         // add the placeholder
