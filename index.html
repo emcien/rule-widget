@@ -53,7 +53,7 @@
           </tbody>
         </table>
       </div>
-      
+
       <div class="footer">Copyright 2017 Emcien Corporation</div>
     </div>
 
@@ -73,6 +73,7 @@
 
         for (var i = _depth + 1; i <= 5; i ++) {
           $("td.level-" + i).html("");
+          $("th.level-" + i).html("");
         }
 
         $("td.level-" + _depth).html("<ul class='parent'>");
@@ -148,6 +149,12 @@
 
         $("li.cat", "td.level-" + _depth + " ul.parent").on("click", function() {
           $(".loader").fadeIn();
+
+          for (var i = _depth + 1; i <= 5; i ++) {
+            $("td.level-" + i).html("");
+            $("th.level-" + i).html("");
+          }
+
           $("ul.child", "td.level-" + _depth).hide().parent("li");
           $("td.level-" + _depth).find(".active").removeClass("active");
 
