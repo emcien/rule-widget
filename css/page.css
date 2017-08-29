@@ -20,6 +20,7 @@ header div {
   width: 61%;
   margin: 0 auto;
   position: relative;
+  white-space: nowrap;
 }
 
 .inputs {

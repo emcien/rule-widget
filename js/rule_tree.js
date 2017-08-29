@@ -3,7 +3,7 @@ var RuleTree = (function() {
   var _this;
 
   var _getRules = function() {
-    var url = _this.url + "/api/v1/reports/" + _this.id + "/rules?page=1&size=100";
+    var url = _this.url + "/api/v1/reports/" + _this.id + "/rules?page=1&size=100&sort=-lift";
     url += "&filter[size]=" + _this.depth;
     url += "&filter[outcome_item_id]=" + _this.outcome;
 

@@ -120,11 +120,11 @@
             }else if(lift > 2){
               result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " + Math.round(lift, -1) + "<small>X</small> more likely"
             }else if(lift > 1){
-              result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " + Math.round(lift * 100) + "<small>%</small> more likely"
+              result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " + Math.round((lift - 1) * 100) + "<small>%</small> more likely"
             }else if(lift < 0.5){
               result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " + Math.round(lift, -1) + "<small>X</small> less likely"
             }else if(lift < 1){
-              result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " + Math.round(lift * 100) + "<small>%</small> less likely"
+              result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " + Math.round((lift - 1) * 100) + "<small>%</small> less likely"
             }else{
               result = "--"
             }
