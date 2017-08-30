@@ -23,7 +23,7 @@ var RuleTree = (function() {
         _this.callback.call(_this);
       },
       error: function(data) {
-        debugger;
+        alert(data.responseText)
       }
     });
   };
