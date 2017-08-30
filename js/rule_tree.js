@@ -82,7 +82,7 @@ var RuleTree = (function() {
         callback.call(_this);
       },
       error: function(data) {
-        debugger;
+        alert(data.responseText);;
       }
     });
   };
@@ -110,7 +110,7 @@ var RuleTree = (function() {
         callback.call(_this);
       },
       error: function(data) {
-        debugger;
+        alert(data.responseText);;
       }
     });
   };
@@ -138,7 +138,7 @@ var RuleTree = (function() {
           _this.prefetchCounts[d] = data.meta.records_total;
         },
         error: function(data) {
-          debugger;
+          alert(data.responseText);;
         }
       });
 
