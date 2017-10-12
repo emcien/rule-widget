@@ -218,14 +218,26 @@ var _renderPagination = function _renderPagination(meta) {
   if (meta.pages_total > 1 && $cat.parent().find(".pager").length === 0) {
     // add prev / next arrows
     var pager = "<span class='pager'>";
-    pager += "<span class='prev fa fa-arrow-circle-left'></span>";
-    pager += "<span class='next fa fa-arrow-circle-right'></span>";
+    pager += "<span class='first fa fa-fast-backward'></span>";
+    pager += "<span class='prev fa fa-step-backward'></span>";
+    pager += "<span class='next fa fa-step-forward'></span>";
+    pager += "<span class='last fa fa-fast-forward'></span>";
     pager += "<span class='track'>(" + current + " of " + total + ")</span>";
     pager += "</span>";
 
     $cat.parent().append(pager);
 
     // event bindings
+    $('.first', $cat.parent()).on('click', function() {
+      if (!$(this).hasClass("active")) return;
+      var id = $cat.data("id");
+      var depth = $cat.data("depth");
+      var current = $cat.data("current_page");
+      var rule = ruleItems(depth).map(function(d) { return d.toString(); });
+
+      fetch("items", [id, depth, rule, 1], render.bind(_this, "items"));
+    });
+
     $('.prev', $cat.parent()).on('click', function() {
       if (!$(this).hasClass("active")) return;
       var id = $cat.data("id");
@@ -245,20 +257,30 @@ var _renderPagination = function _renderPagination(meta) {
 
       fetch("items", [id, depth, rule, current + 1], render.bind(_this, "items"));
     });
+
+    $('.last', $cat.parent()).on('click', function() {
+      if (!$(this).hasClass("active")) return;
+      var id = $cat.data("id");
+      var depth = $cat.data("depth");
+      var total = $cat.data("total_pages");
+      var rule = ruleItems(depth).map(function(d) { return d.toString(); });
+
+      fetch("items", [id, depth, rule, total], render.bind(_this, "items"));
+    });
   }
 
   $('.track', $cat.parent()).html("(" + current + " of " + total + ")");
 
   if (current > 1) {
-    $('.prev', $cat.parent()).addClass('active');
+    $('.prev, .first', $cat.parent()).addClass('active');
   } else {
-    $('.prev', $cat.parent()).removeClass('active');
+    $('.prev, .first', $cat.parent()).removeClass('active');
   }
 
   if (current < total) {
-    $('.next', $cat.parent()).addClass('active');
+    $('.next, .last', $cat.parent()).addClass('active');
   } else {
-    $('.next', $cat.parent()).removeClass('active');
+    $('.next, .last', $cat.parent()).removeClass('active');
   }
 };
 

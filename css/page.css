@@ -286,20 +286,19 @@ ul.parent li .very-unlikely {
   display: none;
 }
 
-
 .pager {
   margin-left: 10px;
 }
 
-.pager .prev, .pager .next {
+.pager .prev, .pager .next, .pager .first, .pager .last {
   margin-right: 10px;
 }
 
-.pager .prev, .pager .next {
+.pager .prev, .pager .next, .pager .first, .pager .last {
   color: #b3b3b3;
 }
 
-.pager .active.prev:hover, .pager .active.next:hover {
+.pager .active.prev:hover, .pager .active.next:hover, .pager .active.first:hover, .pager .active.last:hover {
   color: rgb(25, 148, 208);
   cursor: pointer;
 }
