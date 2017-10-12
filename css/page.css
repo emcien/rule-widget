@@ -146,6 +146,22 @@ input[type="password"] {
   color: #e9118c;
 }
 
+.progress {
+  display: block;
+}
+
+.progress progress {
+  display: none;
+  margin: auto;
+}
+
+.progress .task {
+  display: none;
+  font-size: .5em;
+  margin-top: -20px;
+  margin-bottom: -20px;
+}
+
 .actors {
   width: 60%;
   text-align: left;
@@ -264,6 +280,32 @@ ul.parent li .very-unlikely {
   vertical-align: middle;
   white-space: nowrap;
   word-break: break-all;
+}
+
+.category-pill.no_children, li.cat.no_children {
+  display: none;
+}
+
+
+.pager {
+  margin-left: 10px;
+}
+
+.pager .prev, .pager .next {
+  margin-right: 10px;
+}
+
+.pager .prev, .pager .next {
+  color: #b3b3b3;
+}
+
+.pager .active.prev:hover, .pager .active.next:hover {
+  color: rgb(25, 148, 208);
+  cursor: pointer;
+}
+
+.pager .active {
+  color: #03afe5;
 }
 
 .item-pill {

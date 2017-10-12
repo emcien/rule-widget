@@ -9,7 +9,8 @@
         <link rel="stylesheet" href="css/page.css">
         <script src="https://fastcdn.org/Underscore.js/1.8.3/underscore-min.js"></script>
         <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-        <script src="js/rule_tree.js"></script>
+        <script src="js/ruleExplorer.js"></script>
+        <script src="js/ruleView.js"></script>
   </head>
   <body>
     <header>
@@ -28,6 +29,10 @@
 
     <div class="stage">
       <span class="rule-show">Welcome to <em>Emcien Rules Explorer</em></span>
+      <span class="progress">
+        <progress value="0" max="1"></progress>
+        <div class="task"></div>
+      </span>
     </div>
 
     <div class="actors">
@@ -68,236 +73,5 @@
     </div>
 
     <div class="loader"><span><img src="images/worker.gif" width="40" height="40" alt=""></span></div>
-
-    <script>
-      function getStyleRule(name) {
-        for(var i=0; i<document.styleSheets.length; i++) {
-          var ix, sheet = document.styleSheets[i];
-          if (sheet.cssRules && sheet.cssRules.length) {
-            for (ix=0; ix<sheet.cssRules.length; ix++) {
-              if (sheet.cssRules[ix].selectorText === name)
-                  return sheet.cssRules[ix].style;
-            }
-          }
-        }
-        return null;
-      }
-
-      var callback = function() {
-        // erase all content after "depth"
-        var _this = this;
-        var _depth = this.depth;
-
-        if(_.keys(_this.categories).length > 0){
-          $("th.level-" + _depth).text("Level " + _depth);
-        }else{
-          $("th.level-" + _depth).text("");
-        }
-
-        for (var i = _depth + 1; i <= 7; i ++) {
-          $("td.level-" + i).html("");
-          $("th.level-" + i).html("");
-        }
-
-        $("td.level-" + _depth).html("<ul class='parent'>");
-
-        var cat_pills = [];
-
-        // this will use the catOrder ordering, but only include keys from the categories list
-        var cats = _.intersection(this.catOrder, _.keys(this.categories));
-
-        var _dots = function(this_impact, max_impact, min_impact){
-          var categoryOutcomeImpactPct = (this_impact / max_impact) * 100;
-
-          var _els = [];
-          var fullCircles = Math.floor(categoryOutcomeImpactPct / 20);
-          for (var x = 0; x < fullCircles; x++) {
-            _els.push('<i class="fa fa-circle" aria-hidden="true"></i>')
-          }
-
-          var halfCircle = (categoryOutcomeImpactPct % 20) >= 10;
-          if (halfCircle) {
-            _els.push('<i class="fa fa-adjust aria-hidden="true"></i>')
-          }
-
-          var emptyCircles = 5 - fullCircles - halfCircle;
-          for (var y = 0; y < emptyCircles; y++) {
-            _els.push('<i class="fa fa-circle-o" aria-hidden="true"></i>')
-          }
-
-          return _els.reverse().join('');
-        }
-
-        for (var i = 0; i < cats.length; i ++) {
-          var max_impact = this.catImpacts[cats[0]];
-          var min_impact = this.catImpacts[cats[cats.length - 1]];
-          var this_impact = this.catImpacts[cats[i]];
-
-          cat_pills.push("<span class=\"dots\" title=\"Category Impact: " + this_impact + "\">" + _dots(this_impact, max_impact, min_impact) + "</span><span class=\"category-pill\" data-impact=" + this_impact + ">" + cats[i] + "</span>");
-        }
-
-        for (var i = 0; i < cats.length; i ++) {
-          var items = this.categories[cats[i]];
-          items = _.sortBy(items, "cprob").reverse();
-
-          var _lift = function(lift){
-            var result = "";
-            if(lift == 0){
-              result = "<span class=\"very-unlikely\">Very Unlikely</span>"
-            }else if(lift > 2){
-              result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " + Math.round(lift, -1) + "<small>X</small> more likely"
-            }else if(lift > 1){
-              result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " + Math.round((lift - 1) * 100) + "<small>%</small> more likely"
-            }else if(lift < 0.5){
-              result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " + Math.round(lift, -1) + "<small>X</small> less likely"
-            }else if(lift < 1){
-              result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " + Math.round((lift - 1) * 100) + "<small>%</small> less likely"
-            }else{
-              result = "--"
-            }
-            return "<span class=\"lift\">" + result + "</span>";
-          }
-
-          var itemList = "<ul class='child' style='display: none;'>"
-          for (var j = 0; j < items.length; j ++) {
-            var item = items[j];
-            var liftClass = item.lift > 1 ? "lift-pos" : "lift-neg";
-            itemList += "<li class='item " + liftClass + "' data-freq='" + item.freq + "' data-cprob='" + item.cprob + "' data-outcome='" + item.outcome + "' data-lift='" + item.lift + "' data-id='" + item.id + "' data-name='" + item.name + "' data-cat='" + cats[i] + "'><span class=\"item-pill\">" + item.name + "</span>" + _lift(item.lift) + "</li>";
-          }
-          itemList += "</ul>"
-
-          $("ul.parent", "td.level-" + _depth).append("<li class='cat'>" + cat_pills[i] + itemList + "</li>");
-        }
-
-        $("td.level-" + _depth).append("</ul>");
-        $(".loader").fadeOut();
-
-        $("span.category-pill", "td.level-" + _depth + " ul.parent").on("click", function() {
-          $(".loader").fadeIn();
-
-          for (var i = _depth + 1; i <= 7; i ++) {
-            $("td.level-" + i).html("");
-            $("th.level-" + i).html("");
-          }
-
-          $("ul.child", "td.level-" + _depth).hide().parent("li");
-          $("td.level-" + _depth).find(".active").removeClass("active");
-
-          var children = $("li.item", $(this).parent()).first().attr('data-children');
-          if (typeof children !== typeof undefined && children !== false) {
-            $("ul.child", $(this).parent()).fadeIn();
-            $(".loader").fadeOut();
-          } else {
-            // rule count prefetch!
-            var itemIds = _.map($("li.item", $(this).parent()), function(d) { return $(d).data("id").toString(); });
-            ruleTree.prefetchList = itemIds;
-
-            var level = $(this).parent().parent().parent().data("level");
-            ruleTree.fetchCounts.call(this, categoryCallback, level, $(this).parent());
-          }
-        });
-
-        $("li.item", "td.level-" + _depth).on("click", function() {
-          $("li.item", "td.level-" + _depth).removeClass("active-item");
-          $("li.cat", "td.level-" + _depth).removeClass("active");
-          $(this).addClass("active-item");
-
-          var id = $(this).data().id.toString();
-          var cat = $(this).data().cat;
-          var lift = $(this).data().lift;
-          var item_name = $(this).data().name;
-          var outcome = $(this).data().outcome;
-          var freq = $(this).data().freq;
-          var cprob = Math.round((100 * $(this).data().cprob), -1);
-
-          _this.rule.length = _depth - 1;
-          _this.ruleString.length = _depth - 1;
-          _this.rule[_depth - 1] = id;
-          _this.ruleString[_depth - 1] = "<span class=\"item-pill with-cat\">" + item_name + "<small>" + cat + "</small></span>";
-
-          $(".rule-show").html("Transaction containing " + _this.ruleString.join(" and ") + " are " + _lift(lift) + " to contain <span class=\"outcome-text\">" + outcome + "</span><div class=\"sub-text\">" + freq + " Occurrences in Training Data. " + cprob + "% Conditional Probability.<div>");
-          _this.dig(_depth + 1);
-        });
-      };
-
-      var outcomeCallback = function() {
-        // we want to re-hide it if were submitting a different report
-        $(".outcome").hide();
-
-        // add the placeholder
-        $("select.outcome-selector").html("<option value='' disabled selected>Select an outcome</option>");
-
-        // fill in all the options that have been populated
-        for (var i = 0; i < ruleTree.outcomes.length; i ++) {
-          var outcome = ruleTree.outcomes[i];
-          var name = outcome.category + "::" + outcome.name;
-          $("select.outcome-selector").append("<option value=" + outcome.id + ">" + name + "</option>");
-        }
-
-        $(".outcome").fadeIn();
-      };
-
-      var categoryCallback = function() {
-        $("li.item", this).each(function() {
-          var childCount = ruleTree.prefetchCounts[$(this).data("id")];
-          $(this).attr("data-children", childCount);
-          if(childCount > 0){
-            $(".item-pill", this).addClass("has_children");
-          }else{
-            $(".item-pill", this).addClass("no_children");
-          }
-        });
-
-        $("ul.child", this).fadeIn();
-        $(".loader").fadeOut();
-      };
-
-      $(document).ready(function() {
-        // retrieve input values from local storage
-        $("input").each(function() {
-          this.value = localStorage.getItem(this.name);
-        });
-
-        var opts = {};
-        $(".submit").on("click", function() {
-          $("input").each(function() {
-            localStorage.setItem(this.name, this.value);
-            opts[this.name] = this.value;
-          });
-
-          $(".outcome-selector").css({opacity:1});
-
-          window.ruleTree = new RuleTree(opts.server, opts.token, opts.report, callback);
-
-          // fetch the outcomes and populate the option dropdown with the outcomes
-          ruleTree.fetchOutcomes(outcomeCallback);
-        });
-
-        // toggle show/hide lift switch
-        $("#lift").change(function() {
-          var rule = getStyleRule('.lift-neg');
-
-          if ($(this).is(":checked")) {
-            rule.display = "none";
-          } else {
-            rule.display = "list-item";
-          }
-        });
-
-        // changing an outcome resets the rule
-        $("select.outcome-selector").change(function() {
-          ruleTree.outcome = this.value;
-          ruleTree.rule = [];
-
-          ruleTree.fetchCategories(function() {
-            ruleTree.dig();
-          });
-
-          $(".rule-show").html("Welcome to <em>Emcien Rules Explorer</em>");
-
-          $(".actors").fadeIn();
-        });
-      });
-    </script>
   </body>
 </html>
