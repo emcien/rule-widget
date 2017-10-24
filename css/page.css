@@ -6,7 +6,7 @@
 
 body {
   font: normal 13px/18px 'Raleway', sans-serif;
-  background: #f7f7f7;
+  background: #fff;
   color: #373737;
 }
 
@@ -93,9 +93,8 @@ input[type="password"] {
 }
 
 .stage {
-  margin: 0 auto 30px auto;
+  margin: 0 auto;
   text-align: center;
-  border-bottom: dotted 1px #c7c7c7;
   padding: 45px 30px;
   background: #fff;
   font-size: 24px;
@@ -143,29 +142,44 @@ input[type="password"] {
 .rule-show em{
   font-style: normal;
   font-weight: 400;
-  color: #e9118c;
+  color: #000;
 }
 
 .progress {
   display: block;
+  width: 300px;
+  margin: 200px auto 0 auto;
+}
+
+.progress-dim{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.5);
+  top: 0;
+  left: 0;
+  text-align: center;
+  display: none;
 }
 
 .progress progress {
-  display: none;
+  display: block;
   margin: auto;
+  width: 300px;
 }
 
 .progress .task {
-  display: none;
-  font-size: .5em;
-  margin-top: -20px;
-  margin-bottom: -20px;
+  display: block;
+  font-size: 16px;
+  padding: 5px 0;
+  font-weight: 200;
+  color: #000;
 }
 
 .actors {
   width: 60%;
   text-align: left;
-  margin: 30px auto;
+  margin: 0 auto 30px auto;
   display: none;
   position: relative;
 }
@@ -209,8 +223,12 @@ ul.child li {
   padding: 3px 0;
 }
 
-.level-1 ul.child li .item-pill {
-  margin-left: 66px;
+.level-1 ul.child li {
+  padding: 3px 0 3px 61px;
+}
+
+ul.child li .item-pill {
+  margin-left: 5px;
 }
 
 .actors .no_children{
@@ -218,7 +236,7 @@ ul.child li {
   border-style: solid;
   box-shadow: rgba(255, 255, 255, 0.2) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
   color: rgb(16, 61, 82);
-  background: #fff;
+  background-color: #;
   border-color: #d4d6d7;
   border-bottom-color: #c4c6c7;
 }
@@ -406,21 +424,6 @@ ul.parent li .very-unlikely {
   color: #646667;
 }
 
-.loader{
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: none;
-}
-
-.loader span{
-  position: relative;
-  top: 50%;
-  left: 50%;
-}
-
 .footer{
   margin: 30px 0 0 0;
   text-align: center;
@@ -481,4 +484,13 @@ caption {
   right: 0;
   font-size: 11px;
   color: #676767;
+}
+
+.lift-text{
+  color: #676767;
+}
+
+.cat-spinner{
+  margin: 0 0 0 5px;
+  font-weight: 500;
 }

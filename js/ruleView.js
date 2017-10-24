@@ -160,6 +160,8 @@ var _showItems = function showItems() {
     var depth = $cat.data("depth");
     var rule = ruleItems(depth).map(function(d) { return d.toString(); });
 
+    $cat.append("<span class=\"fa fa-refresh fa-spin cat-spinner\"></span>")
+
     fetch("items", [id, depth, rule, 1], render.bind(_this, "items"));
   }
 };
@@ -191,15 +193,17 @@ var _renderItems = function _renderItems(response) {
         item.outcome + "' data-outcomename='" + item.outcome + "' data-lift='" +
         item.lift + "' data-count='" + counts[item.id] + "' data-id='" +
         item.id + "' data-name='" + item.name + "' data-cat='" + item.category_id +
-        "' data-catname='" + item.category + "'><span class=\"item-pill " + childrenClass + "\">" + item.name +
-        "</span>" + lift(item.lift) + "</li>";
+        "' data-catname='" + item.category + "'>" +
+        lift_icon(item.lift) +
+        "<span class=\"item-pill " + childrenClass + "\">" + item.name + "</span>" +
+        lift_text(item.lift) + "</li>";
     }
-
     itemList += "</ul>";
     $cat.parent().append(itemList);
     $cat.parent().find(".item-pill").on('click', expandRule);
     $('.child', $cat.closest("td")).hide();
     $cat.parent().find(".child").show();
+    $('.cat-spinner').hide();
   });
 };
 
@@ -337,18 +341,19 @@ var progress = function(d, task) {
   var $bar = $($progress[0]);
   var $task = $($progress[1]);
   var current = $bar.val();
+  var $overlay = $('.progress-dim');
 
   // the first clause here prevents it from even showing if it will take
   // less than 3 complete cycles
   if ((current === 0 && d.progress >= 1/3) || d.progress >= 1.0) {
     $progress.hide();
+    $overlay.hide();
     $bar.val(0);
     $task.html("");
-    $(".loader").fadeOut();
   } else {
-    $(".loader").fadeIn();
     $bar.val(d.progress);
     $task.html(task);
+    $overlay.show();
     $progress.show();
   }
 };
@@ -399,6 +404,45 @@ var lift = function(lift){
   }
   return "<span class=\"lift\">" + result + "</span>";
 };
+
+var lift_text = function(lift){
+  var result = "";
+  if (lift == 0){
+    result = "<span class=\"very-unlikely\">Very Unlikely</span>";
+  } else if (lift > 2) {
+    result = Math.round(lift, -1) + "<small>X</small> more likely";
+  } else if (lift > 1) {
+    result = Math.round((lift - 1) * 100) + "<small>%</small> more likely";
+  } else if (lift < 0.5) {
+    // TODO: christopheraltman - be careful here, this rounds it down
+    //       to "0X less likely" pretty often. (e.g. if lift = .17)
+    result = Math.round(lift, -1) + "<small>X</small> less likely";
+  } else if (lift < 1) {
+    result = Math.round((lift - 1) * 100) + "<small>%</small> less likely";
+  } else {
+    result = "--";
+  }
+  return "<span class=\"lift lift-text\">" + result + "</span>";
+};
+
+var lift_icon = function(lift){
+  var result = "";
+  if (lift == 0){
+    result = "";
+  } else if (lift > 2) {
+    result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i>";
+  } else if (lift > 1) {
+    result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i>";
+  } else if (lift < 0.5) {
+    result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i>";
+  } else if (lift < 1) {
+    result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i>";
+  } else {
+    result = "--";
+  }
+  return "<span class=\"lift\">" + result + "</span>";
+};
+
 
 var dots = function(this_impact, max_impact, min_impact){
   var categoryOutcomeImpactPct = (this_impact / max_impact) * 100;
