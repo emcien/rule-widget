@@ -222,10 +222,8 @@ var _renderPagination = function _renderPagination(meta) {
   if (meta.pages_total > 1 && $cat.parent().find(".pager").length === 0) {
     // add prev / next arrows
     var pager = "<span class='pager'>";
-    pager += "<span class='first fa fa-fast-backward'></span>";
     pager += "<span class='prev fa fa-step-backward'></span>";
     pager += "<span class='next fa fa-step-forward'></span>";
-    pager += "<span class='last fa fa-fast-forward'></span>";
     pager += "<span class='track'>(" + current + " of " + total + ")</span>";
     pager += "</span>";
 
@@ -392,10 +390,8 @@ var lift = function(lift){
     result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i> " +
              Math.round((lift - 1) * 100) + "<small>%</small> more likely";
   } else if (lift < 0.5) {
-    // TODO: christopheraltman - be careful here, this rounds it down
-    //       to "0X less likely" pretty often. (e.g. if lift = .17)
     result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " +
-             Math.round(lift, -1) + "<small>X</small> less likely";
+             Math.round(1 / lift, -1) + "<small>X</small> less likely";
   } else if (lift < 1) {
     result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i> " +
              Math.round((lift - 1) * 100) + "<small>%</small> less likely";
@@ -414,9 +410,7 @@ var lift_text = function(lift){
   } else if (lift > 1) {
     result = Math.round((lift - 1) * 100) + "<small>%</small> more likely";
   } else if (lift < 0.5) {
-    // TODO: christopheraltman - be careful here, this rounds it down
-    //       to "0X less likely" pretty often. (e.g. if lift = .17)
-    result = Math.round(lift, -1) + "<small>X</small> less likely";
+    result = Math.round(1 / lift, -1) + "<small>X</small> less likely";
   } else if (lift < 1) {
     result = Math.round((lift - 1) * 100) + "<small>%</small> less likely";
   } else {
