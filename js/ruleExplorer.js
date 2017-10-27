@@ -58,7 +58,7 @@ var RuleExplorer = (function() {
     var request = $.ajax({
       url: fullUrl,
       method: "GET",
-      beforeSend: function (xhr) { 
+      beforeSend: function (xhr) {
         xhr.setRequestHeader("Authorization", _this.token);
       }
     });
@@ -170,7 +170,7 @@ var RuleExplorer = (function() {
   };
 
   RuleExplorer.prototype.fetchOutcomes = function() {
-    var path = "/api/v1/reports/" + _this.report + "/outcomes";
+    var path = "/api/v1/reports/" + _this.report + "/outcomes?size=100";
     request = _getAll.call(_this, path, {});
     request.done(function(d) { _this.outcomes = d; });
     return request;

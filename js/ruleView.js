@@ -116,7 +116,7 @@ var _renderCategories = function _renderCategories(depth) {
 
     clearAfter(depth - 1);
 
-    $("td.level-" + depth).html("<ul class='parent'>");
+    $("td.level-" + depth).html("<div class='parent'>");
 
     var cats = ruleExplorer.categories;
 
@@ -124,6 +124,8 @@ var _renderCategories = function _renderCategories(depth) {
     var min_impact = cats[cats.length - 1].category_outcome_impact;
 
     for (var i = 0; i < cats.length; i ++) {
+      if(cats[i].rule_count < 1){ continue; }
+
       // Skip rendering the outcome
       if (cats[i].category_id == +ruleExplorer.outcomes[0].category_id) continue;
 
@@ -131,18 +133,19 @@ var _renderCategories = function _renderCategories(depth) {
 
       var childrenClass = cats[i].rule_count > 0 ? "has_children" : "no_children";
 
-      cat_pill = "<span class=\"dots\" title=\"Category Impact: " +
+      var cat_dots = "<span class=\"dots\" title=\"Category Impact: " +
         this_impact + "\">" + dots(this_impact, max_impact, min_impact) +
-        "</span><span class=\"category-pill " + childrenClass + "\" data-impact=" +
+        "</span>"
+
+      var cat_pill = "<span class=\"category-pill " + childrenClass + "\" data-impact=" +
         this_impact + " data-id=" + cats[i].category_id + " data-depth=" + depth +
         " data-count=" + cats[i].rule_count + ">" + cats[i].category_name + "</span>";
 
-      $("ul.parent", "td.level-" + depth).append("<li class='cat " + childrenClass + "'>" + cat_pill + "</li>");
+      $("div.parent", "td.level-" + depth).append("<table class='cat " + childrenClass + "'><tbody><tr><td class='dotstd'>" + cat_dots + "</td><td class='catname'>" + cat_pill + "</td></tr></tbody></table>");
     }
 
-    $("td.level-" + depth).append("</ul>");
+    $("td.level-" + depth).append("</div>");
     $('.category-pill.has_children', "td.level-" + depth).on('click', _showItems);
-
     $(".actors").fadeIn();
   });
 };
@@ -160,16 +163,17 @@ var _showItems = function showItems() {
     var depth = $cat.data("depth");
     var rule = ruleItems(depth).map(function(d) { return d.toString(); });
 
-    $cat.append("<span class=\"fa fa-refresh fa-spin cat-spinner\"></span>")
-
-    fetch("items", [id, depth, rule, 1], render.bind(_this, "items"));
+    if($cat.html().indexOf("fa-refresh") === -1){
+      $cat.append("<span class=\"fa fa-refresh fa-spin cat-spinner\"></span>")
+      fetch("items", [id, depth, rule, 1], render.bind(_this, "items"));
+    }
   }
 };
 
 var _renderItems = function _renderItems(response) {
   var _this = this;
   var $cat = $(this);
-  var depth = $cat.closest("td").data("level");
+  var depth = $cat.data("depth");
   var rule = ruleItems(depth);
   var items = ruleExplorer.itemsFromRules(rule, response.data);
   var itemIds = items.map(function(d) { return d.id; });
@@ -179,31 +183,41 @@ var _renderItems = function _renderItems(response) {
     _renderPagination.call(_this, meta);
 
     // clear out any items there before
-    $('.child', $cat.parent()).remove();
+    var tddepth = ".level-" + depth;
+    $('.child', tddepth).remove();
+    $(".catname", tddepth).removeClass("dim-other-cats");
 
-    var itemList = "<ul class='child' style='display: none;'>";
+    var itemList = "<div class='child' style='display: none;'>";
 
     for (var i = 0; i < items.length; i ++) {
       var item = items[i];
       var liftClass = item.lift > 1 ? "lift-pos" : "lift-neg";
       var childrenClass = counts[item.id] > 0 ? "has_children" : "no_children";
+      var lifts = _.pluck(items, 'lift');
+      var max = _.max(lifts);
+      var min = _.min(lifts);
 
-      itemList += "<li class='item " + liftClass + "' data-freq='" +
+      itemList += "<table><tbody><tr><td class='item " + liftClass + "' data-freq='" +
         item.freq + "' data-cprob='" + item.cprob + "' data-outcome='" +
         item.outcome + "' data-outcomename='" + item.outcome + "' data-lift='" +
         item.lift + "' data-count='" + counts[item.id] + "' data-id='" +
         item.id + "' data-name='" + item.name + "' data-cat='" + item.category_id +
         "' data-catname='" + item.category + "'>" +
-        lift_icon(item.lift) +
-        "<span class=\"item-pill " + childrenClass + "\">" + item.name + "</span>" +
-        lift_text(item.lift) + "</li>";
+        lift_bar(item.lift, max, min) +
+        "<span data-depth=" + depth + " class=\"item-pill " + childrenClass + "\">" + item.name + "</span>" +
+        freq_text(item.freq) + "</td></tr></tbody></table>";
     }
-    itemList += "</ul>";
+    itemList += "</div>";
     $cat.parent().append(itemList);
     $cat.parent().find(".item-pill").on('click', expandRule);
     $('.child', $cat.closest("td")).hide();
     $cat.parent().find(".child").show();
-    $('.cat-spinner').hide();
+    $('.cat-spinner').remove();
+
+    var tdlevel = ".level-" + depth;
+    $(".active-cat").removeClass("active-cat");
+    $cat.parent().addClass("active-cat");
+    $(tdlevel).find(".catname").not($cat.parent()).addClass("dim-other-cats");
   });
 };
 
@@ -293,19 +307,21 @@ var expandRule = function() {
   var $item = $li.data();
   ruleExplorer.priorCount = $item.count;
 
-  var depth = $(this).closest("td").data("level");
+  var depth = $(this).data("depth");
   var rule = ruleExplorer.appendItemToRule($item, depth);
 
-  $("li.item", "td.level-" + depth).removeClass("active-item");
-  $("li.cat", "td.level-" + depth).removeClass("active");
+  $(".item", "td.level-" + depth).removeClass("active-item");
+  $(".cat", "td.level-" + depth).removeClass("active");
   $li.addClass("active-item");
+
+  $(".active-item-pill", "td.level-" + depth).removeClass("active-item-pill");
+  $(this).addClass("active-item-pill");
 
   var ruleString = ruleExplorer.rule.map(function(d) {
     return "<span class=\"item-pill with-cat\">" + d.name + "<small>" + d.catname + "</small></span>";
   });
 
   var cprob = Math.round((100 * $item.cprob), -1);
-
   $(".rule-show").html("Transaction containing " + ruleString.join(" and ") +
       " are " + lift($item.lift) + " to contain <span class=\"outcome-text\">" +
       $item.outcomename + "</span><div class=\"sub-text\">" + $item.freq +
@@ -401,40 +417,24 @@ var lift = function(lift){
   return "<span class=\"lift\">" + result + "</span>";
 };
 
-var lift_text = function(lift){
-  var result = "";
-  if (lift == 0){
-    result = "<span class=\"very-unlikely\">Very Unlikely</span>";
-  } else if (lift > 2) {
-    result = Math.round(lift, -1) + "<small>X</small> more likely";
-  } else if (lift > 1) {
-    result = Math.round((lift - 1) * 100) + "<small>%</small> more likely";
-  } else if (lift < 0.5) {
-    result = Math.round(1 / lift, -1) + "<small>X</small> less likely";
-  } else if (lift < 1) {
-    result = Math.round((lift - 1) * 100) + "<small>%</small> less likely";
-  } else {
-    result = "--";
-  }
-  return "<span class=\"lift lift-text\">" + result + "</span>";
+var freq_text = function(freq){
+  return "<span class=\"freq-text\">x " + freq + "</span>";
 };
 
-var lift_icon = function(lift){
-  var result = "";
-  if (lift == 0){
-    result = "";
-  } else if (lift > 2) {
-    result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i>";
-  } else if (lift > 1) {
-    result = "<i class=\"fa fa-arrow-circle-up arrow-up\"></i>";
-  } else if (lift < 0.5) {
-    result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i>";
-  } else if (lift < 1) {
-    result = "<i class=\"fa fa-arrow-circle-down arrow-down\"></i>";
-  } else {
-    result = "--";
+var lift_bar = function(lift, max, min){
+  var inside = "";
+  var width = 0;
+  var slot = 30;
+
+  if (lift > 1) {
+    width = (lift / max) * slot;
+    inside = "<div class='pos-bar lift-bar-inner' style='width:" + width + "px'></div>"
+  }else{
+    width = (min / lift) * slot;
+    inside = "<div class='neg-bar lift-bar-inner' style='width:" + width + "px'></div>"
   }
-  return "<span class=\"lift\">" + result + "</span>";
+
+  return "<div class=\"lift-bar\">" + inside + "</div>";
 };
 
 
