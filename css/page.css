@@ -145,6 +145,8 @@ input[type="password"] {
   display: block;
   margin: auto;
   width: 300px;
+  border-width: 0;
+  background: transparent;
 }
 
 .progress .task {
@@ -433,4 +435,50 @@ caption {
 
 .rule-show{
   font-weight: 300;
+}
+
+.prev, .next {
+  display: inline-block;
+  margin: 0 2px;
+  color: #03afe5;
+  font-size: 12px;
+}
+
+.next {
+  margin-right: 10px;
+}
+
+.prev:hover, .next:hover{
+  color: #34CF62;
+}
+
+.track{
+  color: #979797;
+  font-weight: 200;
+  font-size: 12px;
+}
+
+.prev{
+  margin-left: 10px;
+}
+
+.source-code{
+  margin: 5px 0 0 0;
+  font-weight: 300;
+  color: #676767;
+}
+
+.source-code i{
+  font-size: 16px;
+  display: inline-block;
+  margin-right: 3px;
+}
+
+.source-code a{
+  color: #03afe5;
+  font-size: 13px;
+}
+
+.source-code:hover{
+  color: #34CF62;
 }
