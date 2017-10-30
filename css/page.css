@@ -99,12 +99,12 @@ input[type="password"] {
   white-space: nowrap;
 }
 
-.rule-show .arrow-down {
-  color: #f00;
+.arrow-down {
+  color: #f00 !important;
 }
 
-.rule-show .arrow-up {
-  color: #34CF62;
+.arrow-up {
+  color: #34CF62 !important;
 }
 
 .rule-show .arrow-down,

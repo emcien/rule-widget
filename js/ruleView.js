@@ -203,7 +203,7 @@ var _renderItems = function _renderItems(response) {
         item.lift + "' data-count='" + counts[item.id] + "' data-id='" +
         item.id + "' data-name='" + item.name + "' data-cat='" + item.category_id +
         "' data-catname='" + item.category + "'>" +
-        lift_bar(item.lift, max, min) +
+        lift_bar(item.lift, max, min, item.freq) +
         "<span data-depth=" + depth + " class=\"item-pill " + childrenClass + "\">" + item.name + "</span>" +
         freq_text(item.freq) + "</td></tr></tbody></table>";
     }
@@ -218,6 +218,8 @@ var _renderItems = function _renderItems(response) {
     $(".active-cat").removeClass("active-cat");
     $cat.parent().addClass("active-cat");
     $(tdlevel).find(".catname").not($cat.parent()).addClass("dim-other-cats");
+
+    $(function (){ $('[data-toggle="tooltip"]').tooltip({html:true}) });
   });
 };
 
@@ -421,17 +423,20 @@ var freq_text = function(freq){
   return "<span class=\"freq-text\">x " + freq + "</span>";
 };
 
-var lift_bar = function(lift, max, min){
+var lift_bar = function(lift_value, max, min, freq){
   var inside = "";
   var width = 0;
   var slot = 30;
 
-  if (lift > 1) {
-    width = (lift / max) * slot;
-    inside = "<div class='pos-bar lift-bar-inner' style='width:" + width + "px'></div>"
+  var lift_text = lift(lift_value);
+  var tooltip_text = lift_text + "<br>Frequency: " + freq;
+
+  if (lift_value > 1) {
+    width = (lift_value / max) * slot;
+    inside = "<div class='pos-bar lift-bar-inner' style='width:" + width + "px' data-toggle='tooltip' title='Lift:" + tooltip_text + "'></div>"
   }else{
-    width = (min / lift) * slot;
-    inside = "<div class='neg-bar lift-bar-inner' style='width:" + width + "px'></div>"
+    width = (min / lift_value) * slot;
+    inside = "<div class='neg-bar lift-bar-inner' style='width:" + width + "px' data-toggle='tooltip' title='Lift:" + tooltip_text + "'></div>"
   }
 
   return "<div class=\"lift-bar\">" + inside + "</div>";
