@@ -65,6 +65,10 @@ input[type="password"] {
   text-align: center;
 }
 
+.nw{
+  white-space: nowrap !important;
+}
+
 .outcome-selector {
   font-size: 15px;
   width: 200px;
@@ -85,6 +89,7 @@ input[type="password"] {
   line-height: 40px;
   font-weight: 200;
   color: #000;
+  min-width: 1000px;
 }
 
 .stage strong {
@@ -235,6 +240,7 @@ th:empty{
 th {
   color: #676767;
   font-weight: 400;
+  padding-left: 5px;
 }
 
 caption {
@@ -277,10 +283,11 @@ caption {
 }
 
 .cat .dots{
-  margin-right: 5px;
+  margin: 0 5px;
   display: inline-block;
   position: relative;
   top: -1px;
+  white-space: nowrap;
 }
 
 .child{
@@ -305,7 +312,9 @@ caption {
 }
 
 .item{
+  font-family: "Helvetica Neue", helvetica, arial, sans-serif;
   white-space: nowrap;
+  width: 100%;
 }
 
 .child .item-pill{
@@ -352,7 +361,7 @@ caption {
 .lift-bar{
   display: inline-block;
   height: 4px;
-  width: 30px;
+  width: 32px;
   border: solid 1px #d7d7d7;
   border-radius: 1px;
   position: relative;
@@ -360,14 +369,17 @@ caption {
   border-color: #C8F2D4;
 }
 
+.neg-lift-bar{
+  border-color: #FFD1D1;
+}
+
 .lift-bar-inner{
   display: inline-block;
   position: absolute;
   top: 0;
   background: #000;
-  height: 4px;
+  height: 2px;
   right: 0;
-  border-radius: 1px;
 }
 
 .lift-text{
@@ -383,14 +395,6 @@ caption {
 
 .neg-bar{
   background: #f00;
-}
-
-.freq-text{
-  color: #a7a7a7;
-  font-size: 11px;
-  font-weight: 300;
-  display: inline-block;
-  margin: 0 0 0 5px;
 }
 
 .category-pill:hover{
@@ -481,4 +485,27 @@ caption {
 
 .source-code:hover{
   color: #34CF62;
+}
+
+td .fa.children-icon{
+  font-size: 12px !important;
+  color: #a7a7a7 !important;
+  position: relative;
+  bottom: -2px;
+}
+
+td .fa.children-icon:hover{
+  color: #03afe5 !important;
+  cursor: pointer;
+}
+
+.children-td{
+  padding-right: 0 !important;
+}
+
+.freq-text{
+  font-family: "Helvetica Neue", helvetica, arial, sans-serif;
+  font-size: 11px;
+  color: #a7a7a7;
+  font-weight: 300;
 }

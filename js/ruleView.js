@@ -151,6 +151,19 @@ var _renderCategories = function _renderCategories(depth) {
 };
 
 var _showItems = function showItems() {
+  // Clear Levels greater than the one you clicked on
+  var active_level = $(this).data("depth");
+  for(var i = active_level + 1;i<7;i++){
+    var level_class = ".level-" + i;
+    $(level_class).html("");
+  }
+
+  if($(this).parent().hasClass("active-cat")){
+    $(this).parent().find(".child").remove();
+    $(this).parent().removeClass("active-cat").addClass("dim-other-cats");
+    return;
+  }
+
   if ($('.child', $(this).parent()).length > 0) {
     $('.child', $(this).closest("td")).hide();
     $('.child', $(this).parent()).show();
@@ -192,7 +205,13 @@ var _renderItems = function _renderItems(response) {
     for (var i = 0; i < items.length; i ++) {
       var item = items[i];
       var liftClass = item.lift > 1 ? "lift-pos" : "lift-neg";
-      var childrenClass = counts[item.id] > 0 ? "has_children" : "no_children";
+
+      var childrenIcon = "";
+      if(counts[item.id] > 0){
+        childrenIcon = "<i class=\"fa fa-chevron-right children-icon\" data-toggle=\"tooltip\" title=\"This rule has<br>" + counts[item.id] + " descendants\"></i>"
+      }
+
+
       var lifts = _.pluck(items, 'lift');
       var max = _.max(lifts);
       var min = _.min(lifts);
@@ -204,12 +223,17 @@ var _renderItems = function _renderItems(response) {
         item.id + "' data-name='" + item.name + "' data-cat='" + item.category_id +
         "' data-catname='" + item.category + "'>" +
         lift_bar(item.lift, max, min, item.freq) +
-        "<span data-depth=" + depth + " class=\"item-pill " + childrenClass + "\">" + item.name + "</span>" +
-        freq_text(item.freq) + "</td></tr></tbody></table>";
+        "<span data-depth=" + depth + " class=\"item-pill\">" + item.name + "</span>" + freq_text(item.freq) +
+        "</td></td><td class=\"children-td\" data-freq='" +
+        item.freq + "' data-cprob='" + item.cprob + "' data-outcome='" +
+        item.outcome + "' data-outcomename='" + item.outcome + "' data-lift='" +
+        item.lift + "' data-count='" + counts[item.id] + "' data-id='" +
+        item.id + "' data-name='" + item.name + "' data-cat='" + item.category_id +
+        "' data-catname='" + item.category + "'>" + childrenIcon + "</td></tr></tbody></table>";
     }
     itemList += "</div>";
     $cat.parent().append(itemList);
-    $cat.parent().find(".item-pill").on('click', expandRule);
+    $cat.parent().find(".item-pill, .children-icon").on('click', expandRule);
     $('.child', $cat.closest("td")).hide();
     $cat.parent().find(".child").show();
     $('.cat-spinner').remove();
@@ -325,8 +349,8 @@ var expandRule = function() {
 
   var cprob = Math.round((100 * $item.cprob), -1);
   $(".rule-show").html("Transaction containing " + ruleString.join(" and ") +
-      " are " + lift($item.lift) + " to contain <span class=\"outcome-text\">" +
-      $item.outcomename + "</span><div class=\"sub-text\">" + $item.freq +
+      " <span class=\"nw\">are " + lift($item.lift) + " to contain <span class=\"outcome-text\">" +
+      $item.outcomename + "</span></span><div class=\"sub-text\">" + $item.freq +
       " Occurrences in Training Data. " + cprob + "% Conditional Probability.<div>");
 
   clearAfter(depth);
@@ -420,7 +444,7 @@ var lift = function(lift){
 };
 
 var freq_text = function(freq){
-  return "<span class=\"freq-text\">x " + freq + "</span>";
+  return " <span class=\"freq-text\">x " + freq + "</span>";
 };
 
 var lift_bar = function(lift_value, max, min, freq){
@@ -438,8 +462,11 @@ var lift_bar = function(lift_value, max, min, freq){
     width = (min / lift_value) * slot;
     inside = "<div class='neg-bar lift-bar-inner' style='width:" + width + "px' data-toggle='tooltip' title='Lift:" + tooltip_text + "'></div>"
   }
-
-  return "<div class=\"lift-bar\">" + inside + "</div>";
+  if (lift_value > 1) {
+    return "<div class=\"lift-bar\">" + inside + "</div>";
+  }else{
+    return "<div class=\"lift-bar neg-lift-bar\">" + inside + "</div>";
+  }
 };
 
 
