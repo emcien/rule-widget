@@ -164,7 +164,7 @@ var RuleExplorer = (function() {
 
   RuleExplorer.prototype.fetchCategoriesForOutcome = function(outcome) {
     var path = "/api/v1/reports/" + _this.report + "/outcomes/" + outcome + "/categories";
-    request = _getAll.call(_this, path, { sort: "-category_outcome_impact" });
+    request = _getAll.call(_this, path, { sort: "-outcome_impact" });
     request.done(function(d) { _this.categories = d; });
     return request;
   };
@@ -210,10 +210,10 @@ var RuleExplorer = (function() {
 
     _.each(_this.categories, function(cat) {
       var _params = _.clone(params);
-      _params.with_category_ids = cat.category_id;
+      _params.with_category_ids = cat.id;
       var path = {
         url: "/api/v1/reports/" + _this.report + "/rules",
-        key: cat.category_id,
+        key: cat.id,
         params: _params
       };
 
@@ -251,23 +251,18 @@ var RuleExplorer = (function() {
     predicate = predicate.map(function(d) { return d.toString(); });
 
     _.each(rules, function(rule) {
-      var itemIds = rule.item_ids.slice(1,-1).split("|");
-      var itemPosition = itemIds.indexOf(_.difference(itemIds, predicate)[0]);
-      var itemId = itemIds[itemPosition];
-      var cat = rule.category_names.slice(1,-1).split("|")[itemPosition];
-      var catId = rule.category_ids.slice(1,-1).split("|")[itemPosition];
-      var item = rule.item_names.slice(1,-1).split("|")[itemPosition];
-
-      items.push({
-        name: item,
-        id: itemId,
-        freq: rule.cluster_frequency,
-        cprob: rule.conditional_probability,
-        outcome: rule.outcome_item_name,
-        lift: rule.lift,
-        category: cat,
-        category_id: catId
-      });
+      _.each(rule.entries, function(entry) {
+        items.push({
+          name: entry.item_name,
+          id: entry.item_id,
+          freq: rule.frequency,
+          cprob: rule.conditional_probability,
+          outcome: rule.outcome_item_name,
+          lift: rule.lift,
+          category: entry.category_name,
+          category_id: entry.category_id
+        });
+      })
     });
 
     return items;

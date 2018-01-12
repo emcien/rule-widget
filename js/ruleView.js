@@ -85,7 +85,7 @@ var _renderOutcomes = function _renderOutcomes() {
   // fill in all the options that have been populated
   for (var i = 0; i < ruleExplorer.outcomes.length; i ++) {
     var outcome = ruleExplorer.outcomes[i];
-    var name = outcome.category_name + "::" + outcome.item_id;
+    var name = outcome.category_name + "::" + outcome.identifier;
     $("select.outcome-selector").append("<option value=" + outcome.id + ">" + name + "</option>");
   }
 
@@ -104,7 +104,7 @@ var _renderCategories = function _renderCategories(depth) {
 
     _.each(counts, function(count, id) {
       var cat = _.find(ruleExplorer.categories, function(c) {
-        return c.category_id == id;
+        return c.id == id;
       });
 
       if (ruleCats.includes(+id)) {
@@ -120,16 +120,16 @@ var _renderCategories = function _renderCategories(depth) {
 
     var cats = ruleExplorer.categories;
 
-    var max_impact = cats[0].category_outcome_impact;
-    var min_impact = cats[cats.length - 1].category_outcome_impact;
+    var max_impact = cats[0].outcome_impact;
+    var min_impact = cats[cats.length - 1].outcome_impact;
 
     for (var i = 0; i < cats.length; i ++) {
       if(cats[i].rule_count < 1){ continue; }
 
       // Skip rendering the outcome
-      if (cats[i].category_id == +ruleExplorer.outcomes[0].category_id) continue;
+      if (cats[i].id == +ruleExplorer.outcomes[0].id) continue;
 
-      var this_impact = cats[i].category_outcome_impact;
+      var this_impact = cats[i].outcome_impact;
 
       var childrenClass = cats[i].rule_count > 0 ? "has_children" : "no_children";
 
@@ -138,8 +138,8 @@ var _renderCategories = function _renderCategories(depth) {
         "</span>"
 
       var cat_pill = "<span class=\"category-pill " + childrenClass + "\" data-impact=" +
-        this_impact + " data-id=" + cats[i].category_id + " data-depth=" + depth +
-        " data-count=" + cats[i].rule_count + ">" + cats[i].category_name + "</span>";
+        this_impact + " data-id=" + cats[i].id + " data-depth=" + depth +
+        " data-count=" + cats[i].rule_count + ">" + cats[i].name + "</span>";
 
       $("div.parent", "td.level-" + depth).append("<table class='cat " + childrenClass + "'><tbody><tr><td class='dotstd'>" + cat_dots + "</td><td class='catname'>" + cat_pill + "</td></tr></tbody></table>");
     }
