@@ -251,18 +251,20 @@ var RuleExplorer = (function() {
     predicate = predicate.map(function(d) { return d.toString(); });
 
     _.each(rules, function(rule) {
-      _.each(rule.entries, function(entry) {
-        items.push({
-          name: entry.item_name,
-          id: entry.item_id,
-          freq: rule.frequency,
-          cprob: rule.conditional_probability,
-          outcome: rule.outcome_item_name,
-          lift: rule.lift,
-          category: entry.category_name,
-          category_id: entry.category_id
-        });
-      })
+      var itemIds = rule.entries.map(function(d) { return d.item_id + ""; });
+      var itemPosition = itemIds.indexOf(_.difference(itemIds, predicate)[0]);
+      var entryItem = rule.entries[itemPosition];
+
+      items.push({
+        name: entryItem.item_name,
+        id: entryItem.item_id,
+        freq: rule.frequency,
+        cprob: rule.conditional_probability,
+        outcome: rule.outcome_item_name,
+        lift: rule.lift,
+        category: entryItem.category_name,
+        category_id: entryItem.category_id
+      });
     });
 
     return items;
