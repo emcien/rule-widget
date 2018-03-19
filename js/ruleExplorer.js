@@ -251,13 +251,13 @@ var RuleExplorer = (function() {
     predicate = predicate.map(function(d) { return d.toString(); });
 
     _.each(rules, function(rule) {
-      var itemIds = rule.entries.map(function(d) { return d.item_id + ""; });
+      var itemIds = rule.entries.map(function(d) { return d.id + ""; });
       var itemPosition = itemIds.indexOf(_.difference(itemIds, predicate)[0]);
       var entryItem = rule.entries[itemPosition];
 
       items.push({
-        name: entryItem.item_name,
-        id: entryItem.item_id,
+        name: entryItem.name,
+        id: entryItem.id,
         freq: rule.frequency,
         cprob: rule.conditional_probability,
         outcome: rule.outcome_item_name,
