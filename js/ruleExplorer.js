@@ -251,22 +251,19 @@ var RuleExplorer = (function() {
     predicate = predicate.map(function(d) { return d.toString(); });
 
     _.each(rules, function(rule) {
-      var itemIds = rule.item_ids.slice(1,-1).split("|");
+      var itemIds = rule.items.map(function(d) { return d.id + ""; });
       var itemPosition = itemIds.indexOf(_.difference(itemIds, predicate)[0]);
-      var itemId = itemIds[itemPosition];
-      var cat = rule.category_names.slice(1,-1).split("|")[itemPosition];
-      var catId = rule.category_ids.slice(1,-1).split("|")[itemPosition];
-      var item = rule.item_names.slice(1,-1).split("|")[itemPosition];
+      var entryItem = rule.items[itemPosition];
 
       items.push({
-        name: item,
-        id: itemId,
-        freq: rule.cluster_frequency,
+        name: entryItem.name,
+        id: entryItem.id,
+        freq: rule.rule_frequency,
         cprob: rule.conditional_probability,
         outcome: rule.outcome_item_name,
         lift: rule.lift,
-        category: cat,
-        category_id: catId
+        category: entryItem.category_name,
+        category_id: entryItem.category_id
       });
     });
 
